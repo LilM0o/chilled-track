@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 25%;
 
-    --primary: 220 15% 30%;
+    --primary: 220 20% 28%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 20% 95%;
@@ -26,8 +26,8 @@ All colors MUST be HSL.
     --muted: 220 20% 92%;
     --muted-foreground: 220 10% 55%;
 
-    --accent: 155 45% 75%;
-    --accent-foreground: 220 15% 30%;
+    --accent: 155 50% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -38,33 +38,49 @@ All colors MUST be HSL.
 
     --radius: 1rem;
     
-    /* Module Colors - Pastel Palette */
-    --module-blue: 195 60% 75%;
-    --module-blue-foreground: 195 50% 30%;
+    /* Module Colors - Enhanced Pastel Palette */
+    --module-blue: 195 65% 72%;
+    --module-blue-foreground: 195 60% 25%;
+    --module-blue-glow: 195 65% 85%;
     
-    --module-green: 155 45% 75%;
-    --module-green-foreground: 155 40% 30%;
+    --module-green: 155 50% 70%;
+    --module-green-foreground: 155 50% 25%;
+    --module-green-glow: 155 50% 85%;
     
-    --module-orange: 25 70% 80%;
-    --module-orange-foreground: 25 60% 35%;
+    --module-orange: 25 75% 75%;
+    --module-orange-foreground: 25 70% 30%;
+    --module-orange-glow: 25 75% 88%;
     
-    --module-purple: 265 40% 80%;
-    --module-purple-foreground: 265 35% 35%;
+    --module-purple: 265 45% 75%;
+    --module-purple-foreground: 265 45% 30%;
+    --module-purple-glow: 265 45% 88%;
     
-    --module-yellow: 45 80% 80%;
-    --module-yellow-foreground: 45 70% 35%;
+    --module-yellow: 45 85% 75%;
+    --module-yellow-foreground: 45 80% 30%;
+    --module-yellow-glow: 45 85% 88%;
     
-    --module-pink: 10 70% 80%;
-    --module-pink-foreground: 10 60% 35%;
+    --module-pink: 10 75% 75%;
+    --module-pink-foreground: 10 70% 30%;
+    --module-pink-glow: 10 75% 88%;
     
-    /* Shadows - Neumorphic style */
+    /* Shadows - Enhanced Neumorphic */
     --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.08);
     --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.12);
+    --shadow-large: 0 8px 30px rgba(0, 0, 0, 0.15);
+    --shadow-colored: 0 4px 20px rgba(0, 0, 0, 0.1);
     
     /* Status colors */
-    --status-success: 155 45% 75%;
-    --status-warning: 45 80% 75%;
-    --status-error: 0 70% 75%;
+    --status-success: 155 50% 70%;
+    --status-warning: 45 85% 70%;
+    --status-error: 0 70% 70%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(195, 65%, 72%) 0%, hsl(155, 50%, 70%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(220, 20%, 98%) 0%, hsl(220, 20%, 96%) 100%);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 

@@ -13,10 +13,10 @@ const Nettoyage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <header className="bg-card rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
+      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
@@ -25,33 +25,40 @@ const Nettoyage = () => {
       </header>
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="bg-module-orange text-module-orange-foreground rounded-3xl p-8 mb-6 text-center">
-          <SprayCan className="w-16 h-16 mx-auto mb-4" />
+        <div className="bg-module-orange text-module-orange-foreground rounded-3xl p-8 mb-6 text-center 
+          animate-scale-in shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <SprayCan className="w-16 h-16 mx-auto mb-4 animate-bounce-subtle" />
           <h2 className="text-xl font-semibold mb-2">Tâches et conformité</h2>
           <p className="text-sm opacity-75">Suivez votre plan de nettoyage</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-card rounded-2xl p-4 text-center shadow-sm">
+        <div className="grid grid-cols-2 gap-4 mb-6 animate-fade-in-up">
+          <div className="bg-card rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
             <p className="text-2xl font-bold text-primary">12/15</p>
             <p className="text-sm text-muted-foreground">Complétées</p>
           </div>
-          <div className="bg-card rounded-2xl p-4 text-center shadow-sm">
+          <div className="bg-card rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
             <p className="text-2xl font-bold text-primary">80%</p>
             <p className="text-sm text-muted-foreground">Conformité</p>
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <h3 className="text-lg font-semibold">Tâches du jour</h3>
           {tasks.map((task, i) => (
-            <div key={i} className="bg-card rounded-2xl p-4 shadow-sm">
+            <div 
+              key={i} 
+              className="bg-card rounded-2xl p-4 shadow-sm 
+                transition-all duration-300 hover:shadow-md hover:scale-[1.01]
+                animate-fade-in-up"
+              style={{ animationDelay: `${0.3 + i * 0.1}s` }}
+            >
               <div className="flex items-start gap-3">
                 <div className="mt-1">
                   {task.status === "done" ? (
-                    <CheckCircle className="w-5 h-5 text-accent" />
+                    <CheckCircle className="w-5 h-5 text-accent transition-transform duration-300 hover:scale-110" />
                   ) : (
-                    <Clock className="w-5 h-5 text-muted-foreground" />
+                    <Clock className="w-5 h-5 text-muted-foreground animate-pulse-soft" />
                   )}
                 </div>
                 <div className="flex-1">
@@ -64,7 +71,7 @@ const Nettoyage = () => {
                   )}
                 </div>
                 {task.status === "pending" && (
-                  <Button size="sm" className="rounded-lg">
+                  <Button size="sm" className="rounded-lg transition-all duration-300 hover:scale-105 active:scale-95">
                     Valider
                   </Button>
                 )}

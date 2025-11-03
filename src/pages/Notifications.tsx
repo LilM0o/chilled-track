@@ -12,10 +12,10 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <header className="bg-card rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
+      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
@@ -24,11 +24,17 @@ const Notifications = () => {
       </header>
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="space-y-3">
+        <div className="space-y-3 animate-fade-in-up">
           {notifications.map((notif, i) => (
-            <div key={i} className="bg-card rounded-2xl p-4 shadow-sm">
+            <div 
+              key={i} 
+              className="bg-card rounded-2xl p-4 shadow-sm
+                transition-all duration-300 hover:shadow-md hover:scale-[1.01]
+                cursor-pointer animate-fade-in-up"
+              style={{ animationDelay: `${i * 0.1}s` }}
+            >
               <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-xl ${
+                <div className={`p-2 rounded-xl transition-all duration-300 hover:scale-110 ${
                   notif.type === "warning" ? "bg-module-orange" :
                   notif.type === "info" ? "bg-module-blue" :
                   "bg-module-green"
