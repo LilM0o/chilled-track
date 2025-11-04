@@ -16,6 +16,7 @@ import NotificationsSettings from "./pages/NotificationsSettings";
 import TemperatureSettings from "./pages/TemperatureSettings";
 import PersonnelSettings from "./pages/PersonnelSettings";
 import EquipementsSettings from "./pages/EquipementsSettings";
+import NettoyageSettings from "./pages/NettoyageSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/parametres/temperatures" element={<TemperatureSettings />} />
           <Route path="/parametres/personnel" element={<PersonnelSettings />} />
           <Route path="/parametres/equipements" element={<EquipementsSettings />} />
+          <Route path="/parametres/nettoyage" element={<NettoyageSettings />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profil" element={<Profil />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

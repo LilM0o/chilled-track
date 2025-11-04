@@ -1,4 +1,4 @@
-import { ArrowLeft, Settings, Bell, Thermometer, Users, Refrigerator } from "lucide-react";
+import { ArrowLeft, Settings, Bell, Thermometer, Users, Refrigerator, SprayCan } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
@@ -9,6 +9,7 @@ const Parametres = () => {
     { icon: Thermometer, title: "Seuils de température", description: "Configurer les limites acceptables" },
     { icon: Users, title: "Personnel", description: "Gérer les utilisateurs et rôles" },
     { icon: Refrigerator, title: "Équipements", description: "Configurer les frigos et équipements" },
+    { icon: SprayCan, title: "Plan de nettoyage", description: "Configurer les tâches de nettoyage" },
   ];
 
   return (
@@ -35,7 +36,7 @@ const Parametres = () => {
         <div className="space-y-3 animate-fade-in-up">
           {settingsSections.map((section, i) => {
             const Icon = section.icon;
-            const routes = ['/parametres/notifications', '/parametres/temperatures', '/parametres/personnel', '/parametres/equipements'];
+            const routes = ['/parametres/notifications', '/parametres/temperatures', '/parametres/personnel', '/parametres/equipements', '/parametres/nettoyage'];
             return (
               <Link
                 key={i}

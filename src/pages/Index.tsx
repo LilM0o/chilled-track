@@ -1,4 +1,4 @@
-import { Menu, Package, Thermometer, SprayCan, Truck, BarChart3, Settings } from "lucide-react";
+import { Package, Thermometer, SprayCan, Truck, BarChart3, Settings } from "lucide-react";
 import ModuleCard from "@/components/ModuleCard";
 import StatusCard from "@/components/StatusCard";
 import BottomNav from "@/components/BottomNav";
@@ -53,14 +53,8 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
-        <div className="max-w-screen-xl mx-auto flex items-center justify-between">
-          <button className="p-2 hover:bg-secondary rounded-lg transition-all duration-300 hover:scale-110 active:scale-95">
-            <Menu className="w-6 h-6" />
-          </button>
+        <div className="max-w-screen-xl mx-auto flex items-center justify-center">
           <h1 className="text-2xl font-bold text-primary">HACCP Pro</h1>
-          <div className="bg-accent text-accent-foreground px-4 py-1.5 rounded-full text-sm font-medium shadow-sm">
-            Actif
-          </div>
         </div>
       </header>
 
@@ -87,11 +81,13 @@ const Index = () => {
               title="Température Frigos : OK"
               subtitle="(Dernière relevé il ya 10 min)"
               colorClass="bg-module-blue text-module-blue-foreground"
+              to="/temperatures"
             />
             <StatusCard
               title="Plan de Nettoyage :"
               subtitle="3 tâches et attente"
               colorClass="bg-module-green text-module-green-foreground"
+              to="/nettoyage"
             />
           </div>
         </section>
