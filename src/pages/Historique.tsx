@@ -1,15 +1,15 @@
-import { ArrowLeft, BarChart3, Filter } from "lucide-react";
+import { ArrowLeft, BarChart3, Filter, Thermometer, SprayCan, Package, TruckIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
 
 const Historique = () => {
   const activities = [
-    { type: "Température", action: "Relevé frigo 1", value: "3°C", time: "Il y a 10 min", color: "bg-module-green" },
-    { type: "Nettoyage", action: "Sols cuisine validés", time: "Il y a 2h", color: "bg-module-orange" },
-    { type: "Traçabilité", action: "Produit scanné", value: "Lot ABC123", time: "Il y a 3h", color: "bg-module-blue" },
-    { type: "Réception", action: "Livraison fruits", time: "Hier à 09:30", color: "bg-module-purple" },
-    { type: "Température", action: "Relevé congélateur", value: "-18°C", time: "Hier à 08:00", color: "bg-module-green" },
+    { type: "Température", action: "Relevé frigo 1", value: "3°C", time: "Il y a 10 min", color: "bg-module-green", icon: Thermometer },
+    { type: "Nettoyage", action: "Sols cuisine validés", time: "Il y a 2h", color: "bg-module-orange", icon: SprayCan },
+    { type: "Traçabilité", action: "Produit scanné", value: "Lot ABC123", time: "Il y a 3h", color: "bg-module-blue", icon: Package },
+    { type: "Réception", action: "Livraison fruits", time: "Hier à 09:30", color: "bg-module-purple", icon: TruckIcon },
+    { type: "Température", action: "Relevé congélateur", value: "-18°C", time: "Hier à 08:00", color: "bg-module-green", icon: Thermometer },
   ];
 
   return (
@@ -37,31 +37,36 @@ const Historique = () => {
         </div>
 
         <div className="space-y-3 animate-fade-in-up">
-          {activities.map((activity, i) => (
-            <div 
-              key={i} 
-              className="bg-card rounded-2xl p-4 shadow-sm
-                transition-all duration-300 hover:shadow-md hover:scale-[1.01]
-                cursor-pointer animate-fade-in-up"
-              style={{ animationDelay: `${i * 0.08}s` }}
-            >
-              <div className="flex items-start gap-3">
-                <div className={`${activity.color} w-2 h-full rounded-full transition-all duration-300`} />
-                <div className="flex-1">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <span className="text-xs font-medium text-muted-foreground">{activity.type}</span>
-                      <h4 className="font-medium">{activity.action}</h4>
-                      {activity.value && (
-                        <p className="text-sm text-muted-foreground">{activity.value}</p>
-                      )}
+          {activities.map((activity, i) => {
+            const Icon = activity.icon;
+            return (
+              <div 
+                key={i} 
+                className="bg-card rounded-2xl p-4 shadow-sm
+                  transition-all duration-300 hover:shadow-md hover:scale-[1.01]
+                  cursor-pointer animate-fade-in-up"
+                style={{ animationDelay: `${i * 0.08}s` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`${activity.color} rounded-xl p-2.5 transition-all duration-300`}>
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="text-xs font-medium text-muted-foreground">{activity.type}</span>
+                        <h4 className="font-medium">{activity.action}</h4>
+                        {activity.value && (
+                          <p className="text-sm text-muted-foreground">{activity.value}</p>
+                        )}
+                      </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="text-center mt-6 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>

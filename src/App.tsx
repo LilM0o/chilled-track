@@ -12,6 +12,10 @@ import Historique from "./pages/Historique";
 import Parametres from "./pages/Parametres";
 import Notifications from "./pages/Notifications";
 import Profil from "./pages/Profil";
+import NotificationsSettings from "./pages/NotificationsSettings";
+import TemperatureSettings from "./pages/TemperatureSettings";
+import PersonnelSettings from "./pages/PersonnelSettings";
+import EquipementsSettings from "./pages/EquipementsSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +34,10 @@ const App = () => (
           <Route path="/reception" element={<Reception />} />
           <Route path="/historique" element={<Historique />} />
           <Route path="/parametres" element={<Parametres />} />
+          <Route path="/parametres/notifications" element={<NotificationsSettings />} />
+          <Route path="/parametres/temperatures" element={<TemperatureSettings />} />
+          <Route path="/parametres/personnel" element={<PersonnelSettings />} />
+          <Route path="/parametres/equipements" element={<EquipementsSettings />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profil" element={<Profil />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

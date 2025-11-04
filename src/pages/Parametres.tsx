@@ -35,16 +35,18 @@ const Parametres = () => {
         <div className="space-y-3 animate-fade-in-up">
           {settingsSections.map((section, i) => {
             const Icon = section.icon;
+            const routes = ['/parametres/notifications', '/parametres/temperatures', '/parametres/personnel', '/parametres/equipements'];
             return (
-              <button
+              <Link
                 key={i}
-                className="w-full bg-card rounded-2xl p-4 shadow-sm text-left 
+                to={routes[i]}
+                className="block w-full bg-card rounded-2xl p-4 shadow-sm text-left 
                   transition-all duration-300 hover:shadow-md hover:scale-[1.01]
                   animate-fade-in-up"
                 style={{ animationDelay: `${i * 0.1}s` }}
               >
                 <div className="flex items-center gap-4">
-                  <div className="bg-secondary rounded-xl p-3 transition-all duration-300 hover:scale-110">
+                  <div className="bg-secondary rounded-xl p-3 transition-all duration-300">
                     <Icon className="w-6 h-6 text-primary" />
                   </div>
                   <div className="flex-1">
@@ -52,7 +54,7 @@ const Parametres = () => {
                     <p className="text-sm text-muted-foreground">{section.description}</p>
                   </div>
                 </div>
-              </button>
+              </Link>
             );
           })}
         </div>
