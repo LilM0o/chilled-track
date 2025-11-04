@@ -14,30 +14,28 @@ const ModuleCard = ({ title, subtitle, icon: Icon, to, colorClass }: ModuleCardP
     <Link to={to} className="group">
       <div
         className={`${colorClass} rounded-3xl p-6 h-full flex flex-col items-center justify-center text-center gap-3 
-          transition-all duration-300 ease-out
-          hover:scale-[1.03] hover:-translate-y-1
-          active:scale-[0.98]
-          animate-fade-in`}
+          transition-all duration-200 ease-out
+          hover:scale-[1.02] hover:-translate-y-0.5`}
         style={{ 
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
-          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease"
+          transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = "0 12px 40px rgba(0, 0, 0, 0.15)";
+          e.currentTarget.style.boxShadow = "0 8px 30px rgba(0, 0, 0, 0.12)";
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
         }}
       >
         <Icon 
-          className="w-12 h-12 md:w-14 md:h-14 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" 
+          className="w-12 h-12 md:w-14 md:h-14 transition-transform duration-200 group-hover:scale-105" 
           strokeWidth={1.5} 
         />
         <div>
-          <h3 className="font-semibold text-base md:text-lg transition-colors duration-200">
+          <h3 className="font-semibold text-base md:text-lg">
             {title}
           </h3>
-          <p className="text-sm opacity-75 mt-1 transition-opacity duration-200 group-hover:opacity-90">
+          <p className="text-sm opacity-75 mt-1">
             {subtitle}
           </p>
         </div>

@@ -57,9 +57,8 @@ const Index = () => {
           <button className="p-2 hover:bg-secondary rounded-lg transition-all duration-300 hover:scale-110 active:scale-95">
             <Menu className="w-6 h-6" />
           </button>
-          <h1 className="text-2xl font-bold text-primary animate-fade-in">HACCP Pro</h1>
-          <div className="bg-accent text-accent-foreground px-4 py-1.5 rounded-full text-sm font-medium 
-            animate-pulse-soft shadow-sm">
+          <h1 className="text-2xl font-bold text-primary">HACCP Pro</h1>
+          <div className="bg-accent text-accent-foreground px-4 py-1.5 rounded-full text-sm font-medium shadow-sm">
             Actif
           </div>
         </div>
@@ -67,7 +66,7 @@ const Index = () => {
 
       <div className="max-w-screen-xl mx-auto px-6">
         {/* Greeting */}
-        <div className="mb-8 animate-fade-in-up">
+        <div className="mb-8">
           <p className="text-foreground text-lg">
             Bonjour Marie, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">2 tâches en attente</span>
           </p>
@@ -75,19 +74,13 @@ const Index = () => {
 
         {/* Module Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
-          {modules.map((module, index) => (
-            <div 
-              key={module.to}
-              style={{ animationDelay: `${index * 0.1}s` }}
-              className="animate-fade-in-up"
-            >
-              <ModuleCard {...module} />
-            </div>
+          {modules.map((module) => (
+            <ModuleCard key={module.to} {...module} />
           ))}
         </div>
 
         {/* Dashboard Section */}
-        <section className="animate-fade-in-up" style={{ animationDelay: "0.6s" }}>
+        <section>
           <h2 className="text-xl font-semibold mb-4 text-foreground">Tableau à Bord</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <StatusCard

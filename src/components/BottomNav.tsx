@@ -12,7 +12,7 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border z-50 animate-slide-in-right">
+    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border z-50">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="flex justify-around items-center h-16">
           {navItems.map((item) => {
@@ -24,23 +24,20 @@ const BottomNav = () => {
                 key={item.path}
                 to={item.path}
                 className={`flex flex-col items-center justify-center gap-1 
-                  transition-all duration-300 ease-out
-                  hover:scale-110 active:scale-95
+                  transition-colors duration-200 ease-out
                   ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary/70"}`}
               >
                 <Icon 
-                  className={`w-5 h-5 transition-all duration-300 ${
-                    isActive ? "animate-bounce-subtle" : ""
-                  }`} 
+                  className="w-5 h-5" 
                   strokeWidth={isActive ? 2.5 : 2} 
                 />
-                <span className={`text-xs transition-all duration-200 ${
+                <span className={`text-xs transition-colors duration-200 ${
                   isActive ? "font-semibold" : "font-normal"
                 }`}>
                   {item.label}
                 </span>
                 {isActive && (
-                  <div className="absolute bottom-0 w-8 h-0.5 bg-primary rounded-full animate-scale-in" />
+                  <div className="absolute bottom-0 w-8 h-0.5 bg-primary rounded-full" />
                 )}
               </Link>
             );
