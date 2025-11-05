@@ -1,4 +1,4 @@
-import { Home, TrendingUp, Bell, User } from "lucide-react";
+import { Home, TrendingUp, Bell, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const BottomNav = () => {
@@ -8,7 +8,7 @@ const BottomNav = () => {
     { icon: Home, label: "Accueil", path: "/" },
     { icon: TrendingUp, label: "Historique", path: "/historique" },
     { icon: Bell, label: "Notifications", path: "/notifications" },
-    { icon: User, label: "Profil", path: "/profil" },
+    { icon: Settings, label: "Paramètres", path: "/parametres" },
   ];
 
   return (

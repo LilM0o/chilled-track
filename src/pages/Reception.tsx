@@ -2,13 +2,32 @@ import { ArrowLeft, Truck, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const Reception = () => {
+  const [open, setOpen] = useState(false);
+  const [supplier, setSupplier] = useState("");
+  const [temperature, setTemperature] = useState("");
+  const [articles, setArticles] = useState("");
+
   const deliveries = [
     { supplier: "Fruits & Légumes Bio", date: "04/11/2025", temp: "4°C", status: "ok" },
     { supplier: "Boucherie Centrale", date: "03/11/2025", temp: "2°C", status: "ok" },
     { supplier: "Produits Laitiers", date: "02/11/2025", temp: "5°C", status: "ok" },
   ];
+
+  const handleSubmit = () => {
+    if (supplier && temperature) {
+      // Ici, ajouter la logique pour sauvegarder la réception
+      setOpen(false);
+      setSupplier("");
+      setTemperature("");
+      setArticles("");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -26,16 +45,63 @@ const Reception = () => {
       <div className="max-w-screen-xl mx-auto px-6">
         <div className="bg-module-purple text-module-purple-foreground rounded-3xl p-8 mb-6 text-center 
           animate-scale-in shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <Truck className="w-16 h-16 mx-auto mb-4 animate-bounce-subtle" />
+          <Truck className="w-16 h-16 mx-auto mb-4" />
           <h2 className="text-xl font-semibold mb-2">Livraisons fournisseurs</h2>
           <p className="text-sm opacity-75">Contrôlez vos réceptions de marchandises</p>
         </div>
 
-        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 rounded-xl mb-6
-          transition-all duration-300 hover:scale-[1.02] hover:shadow-lg active:scale-95 animate-fade-in-up">
-          <Plus className="w-5 h-5 mr-2" />
-          Nouvelle réception
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 rounded-xl mb-6
+              transition-all duration-300 hover:scale-[1.02] hover:shadow-lg active:scale-95 animate-fade-in-up">
+              <Plus className="w-5 h-5 mr-2" />
+              Nouvelle réception
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Nouvelle réception</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="supplier">Fournisseur</Label>
+                <Input
+                  id="supplier"
+                  placeholder="Nom du fournisseur"
+                  value={supplier}
+                  onChange={(e) => setSupplier(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="articles">Nombre d'articles (optionnel)</Label>
+                <Input
+                  id="articles"
+                  type="number"
+                  placeholder="Ex: 5"
+                  value={articles}
+                  onChange={(e) => setArticles(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="temp">Température camion (°C)</Label>
+                <Input
+                  id="temp"
+                  type="number"
+                  placeholder="Ex: 4"
+                  value={temperature}
+                  onChange={(e) => setTemperature(e.target.value)}
+                />
+              </div>
+              <Button 
+                onClick={handleSubmit} 
+                className="w-full"
+                disabled={!supplier || !temperature}
+              >
+                Enregistrer
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <h3 className="text-lg font-semibold">Réceptions récentes</h3>
@@ -52,8 +118,7 @@ const Reception = () => {
                   <h4 className="font-medium">{delivery.supplier}</h4>
                   <p className="text-sm text-muted-foreground">{delivery.date}</p>
                 </div>
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-medium
-                  animate-pulse-soft shadow-sm">
+                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                   Conforme
                 </span>
               </div>

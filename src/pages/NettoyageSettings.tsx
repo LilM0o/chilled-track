@@ -1,143 +1,152 @@
-import { ArrowLeft, SprayCan, Plus, Clock, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, SprayCan, Plus, Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import BottomNav from "@/components/BottomNav";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
-
-interface CleaningTask {
-  id: number;
-  zone: string;
-  frequency: string;
-  lastCleaned: string;
-  responsible: string;
-  status: "completed" | "pending";
-}
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const NettoyageSettings = () => {
-  const [tasks, setTasks] = useState<CleaningTask[]>([
-    {
-      id: 1,
-      zone: "Cuisine principale",
-      frequency: "Quotidien",
-      lastCleaned: "Aujourd'hui 08:00",
-      responsible: "Marie D.",
-      status: "completed"
-    },
-    {
-      id: 2,
-      zone: "Chambre froide",
-      frequency: "Quotidien",
-      lastCleaned: "Hier 18:00",
-      responsible: "Paul M.",
-      status: "pending"
-    },
-    {
-      id: 3,
-      zone: "Zone de réception",
-      frequency: "Hebdomadaire",
-      lastCleaned: "Il y a 2 jours",
-      responsible: "Sophie L.",
-      status: "completed"
+  const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [taskName, setTaskName] = useState("");
+  const [frequency, setFrequency] = useState("");
+
+  const cleaningTasks = [
+    { name: "Nettoyage sols cuisine", frequency: "Quotidien" },
+    { name: "Désinfection surfaces", frequency: "Quotidien" },
+    { name: "Nettoyage frigos", frequency: "Hebdomadaire" },
+    { name: "Contrôle bacs graisse", frequency: "Mensuel" },
+    { name: "Nettoyage hotte", frequency: "Hebdomadaire" },
+  ];
+
+  const handleAddTask = () => {
+    if (taskName && frequency) {
+      // Ici, ajouter la logique pour sauvegarder la tâche
+      setOpen(false);
+      setTaskName("");
+      setFrequency("");
     }
-  ]);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/parametres">
-            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
+            <Button variant="ghost" size="icon">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-primary">Plan de Nettoyage</h1>
+          <h1 className="text-2xl font-bold text-primary">Plan de nettoyage</h1>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button size="icon" className="ml-auto">
+                <Plus className="w-5 h-5" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Ajouter une tâche</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="taskName">Nom de la tâche</Label>
+                  <Input
+                    id="taskName"
+                    placeholder="Ex: Nettoyage plan de travail"
+                    value={taskName}
+                    onChange={(e) => setTaskName(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="frequency">Fréquence</Label>
+                  <Select value={frequency} onValueChange={setFrequency}>
+                    <SelectTrigger id="frequency">
+                      <SelectValue placeholder="Sélectionner une fréquence" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Quotidien">Quotidien</SelectItem>
+                      <SelectItem value="Hebdomadaire">Hebdomadaire</SelectItem>
+                      <SelectItem value="Mensuel">Mensuel</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={handleAddTask} 
+                  className="w-full"
+                  disabled={!taskName || !frequency}
+                >
+                  Ajouter
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </header>
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="bg-module-orange text-module-orange-foreground rounded-3xl p-8 mb-6 text-center animate-scale-in shadow-lg">
+        <div className="bg-module-orange text-module-orange-foreground rounded-3xl p-8 mb-6 text-center shadow-lg">
           <SprayCan className="w-16 h-16 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Gestion du Plan de Nettoyage</h2>
-          <p className="text-sm opacity-75">Configurez et suivez les tâches de nettoyage</p>
+          <h2 className="text-xl font-semibold mb-2">Gestion du plan</h2>
+          <p className="text-sm opacity-75">Configurez vos tâches de nettoyage</p>
         </div>
 
-        <div className="mb-6">
-          <Button className="w-full sm:w-auto gap-2">
-            <Plus className="w-4 h-4" />
-            Ajouter une tâche de nettoyage
-          </Button>
-        </div>
-
-        <div className="space-y-4 animate-fade-in-up">
-          <h3 className="text-lg font-semibold text-foreground">Tâches configurées</h3>
-          
-          {tasks.map((task, index) => (
-            <Card 
-              key={task.id} 
-              className="p-4 hover:shadow-md transition-shadow duration-300"
-              style={{ animationDelay: `${index * 0.1}s` }}
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold mb-4">Tâches configurées</h3>
+          {cleaningTasks.map((task, i) => (
+            <div
+              key={i}
+              className="bg-card rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300"
             >
-              <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-xl ${task.status === 'completed' ? 'bg-module-green/20' : 'bg-module-orange/20'}`}>
-                  {task.status === 'completed' ? (
-                    <CheckCircle2 className="w-6 h-6 text-green-600" />
-                  ) : (
-                    <Clock className="w-6 h-6 text-orange-600" />
-                  )}
-                </div>
-                
+              <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h4 className="font-semibold text-foreground">{task.zone}</h4>
-                      <p className="text-sm text-muted-foreground">Fréquence : {task.frequency}</p>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      task.status === 'completed' 
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
-                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
-                    }`}>
-                      {task.status === 'completed' ? 'Complété' : 'En attente'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{task.lastCleaned}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span>Responsable : {task.responsible}</span>
-                    </div>
-                  </div>
+                  <h4 className="font-medium">{task.name}</h4>
+                  <p className="text-sm text-muted-foreground mt-1">{task.frequency}</p>
                 </div>
+                <Dialog open={editOpen} onOpenChange={setEditOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Modifier la tâche</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="editTaskName">Nom de la tâche</Label>
+                        <Input
+                          id="editTaskName"
+                          defaultValue={task.name}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="editFrequency">Fréquence</Label>
+                        <Select defaultValue={task.frequency}>
+                          <SelectTrigger id="editFrequency">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Quotidien">Quotidien</SelectItem>
+                            <SelectItem value="Hebdomadaire">Hebdomadaire</SelectItem>
+                            <SelectItem value="Mensuel">Mensuel</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button className="w-full">
+                        Sauvegarder
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
-
-        <Card className="mt-8 p-6">
-          <h3 className="font-semibold mb-4 text-foreground">Configuration des zones</h3>
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between items-center py-2 border-b">
-              <span className="text-muted-foreground">Zones configurées</span>
-              <span className="font-semibold">{tasks.length}</span>
-            </div>
-            <div className="flex justify-between items-center py-2 border-b">
-              <span className="text-muted-foreground">Tâches en attente</span>
-              <span className="font-semibold text-orange-600">
-                {tasks.filter(t => t.status === 'pending').length}
-              </span>
-            </div>
-            <div className="flex justify-between items-center py-2">
-              <span className="text-muted-foreground">Taux de complétion</span>
-              <span className="font-semibold text-green-600">
-                {Math.round((tasks.filter(t => t.status === 'completed').length / tasks.length) * 100)}%
-              </span>
-            </div>
-          </div>
-        </Card>
       </div>
 
       <BottomNav />

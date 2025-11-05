@@ -62,7 +62,7 @@ const Index = () => {
         {/* Greeting */}
         <div className="mb-8">
           <p className="text-foreground text-lg">
-            Bonjour Marie, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">2 tâches en attente</span>
+            Bonjour Dreams Donuts, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">2 tâches en attente</span>
           </p>
         </div>
 

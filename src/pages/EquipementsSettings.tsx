@@ -6,10 +6,16 @@ import BottomNav from "@/components/BottomNav";
 
 const EquipementsSettings = () => {
   const equipments = [
-    { name: "Frigo 1 - Entrée", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
-    { name: "Frigo 2 - Desserts", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
+    { name: "Frigo aliments", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
+    { name: "Réfrigérateur Bar", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
+    { name: "Réfrigérateur Boissons 1", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
+    { name: "Réfrigérateur Boissons 2", type: "Réfrigérateur", temp: "5°C", status: "ok", icon: Refrigerator },
+    { name: "Réfrigérateur Bubble Tea", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
     { name: "Congélateur 1", type: "Congélateur", temp: "-18°C", status: "ok", icon: Snowflake },
-    { name: "Chambre froide", type: "Chambre froide", temp: "2°C", status: "warning", icon: Wind },
+    { name: "Congélateur 2", type: "Congélateur", temp: "-19°C", status: "ok", icon: Snowflake },
+    { name: "Congélateur 3", type: "Congélateur", temp: "-18°C", status: "ok", icon: Snowflake },
+    { name: "Congélateur 4", type: "Congélateur", temp: "-20°C", status: "ok", icon: Snowflake },
+    { name: "Congélateur Glaces", type: "Congélateur", temp: "-22°C", status: "ok", icon: Snowflake },
   ];
 
   return (

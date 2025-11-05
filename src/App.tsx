@@ -11,7 +11,7 @@ import Reception from "./pages/Reception";
 import Historique from "./pages/Historique";
 import Parametres from "./pages/Parametres";
 import Notifications from "./pages/Notifications";
-import Profil from "./pages/Profil";
+
 import NotificationsSettings from "./pages/NotificationsSettings";
 import TemperatureSettings from "./pages/TemperatureSettings";
 import PersonnelSettings from "./pages/PersonnelSettings";
@@ -41,7 +41,6 @@ const App = () => (
           <Route path="/parametres/equipements" element={<EquipementsSettings />} />
           <Route path="/parametres/nettoyage" element={<NettoyageSettings />} />
           <Route path="/notifications" element={<Notifications />} />
-          <Route path="/profil" element={<Profil />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

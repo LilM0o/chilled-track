@@ -2,13 +2,44 @@ import { ArrowLeft, Thermometer, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 const Temperatures = () => {
+  const [open, setOpen] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState("");
+  const [temperature, setTemperature] = useState("");
+
+  const equipments = [
+    "Frigo aliments",
+    "Réfrigérateur Bar",
+    "Réfrigérateur Boissons 1",
+    "Réfrigérateur Boissons 2",
+    "Réfrigérateur Bubble Tea",
+    "Congélateur 1",
+    "Congélateur 2",
+    "Congélateur 3",
+    "Congélateur 4",
+    "Congélateur Glaces",
+  ];
+
   const fridges = [
-    { name: "Frigo 1 - Principal", temp: "3°C", status: "ok", time: "Il y a 10 min" },
-    { name: "Frigo 2 - Légumes", temp: "4°C", status: "ok", time: "Il y a 25 min" },
+    { name: "Frigo aliments", temp: "3°C", status: "ok", time: "Il y a 10 min" },
+    { name: "Réfrigérateur Bar", temp: "4°C", status: "ok", time: "Il y a 25 min" },
     { name: "Congélateur 1", temp: "-18°C", status: "ok", time: "Il y a 1h" },
   ];
+
+  const handleSubmit = () => {
+    if (selectedEquipment && temperature) {
+      // Ici, ajouter la logique pour sauvegarder le relevé
+      setOpen(false);
+      setSelectedEquipment("");
+      setTemperature("");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -26,16 +57,59 @@ const Temperatures = () => {
       <div className="max-w-screen-xl mx-auto px-6">
         <div className="bg-module-green text-module-green-foreground rounded-3xl p-8 mb-6 text-center 
           animate-scale-in shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <Thermometer className="w-16 h-16 mx-auto mb-4 animate-bounce-subtle" />
+          <Thermometer className="w-16 h-16 mx-auto mb-4" />
           <h2 className="text-xl font-semibold mb-2">Relevés quotidiens</h2>
           <p className="text-sm opacity-75">Contrôlez les températures de vos équipements</p>
         </div>
 
-        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 rounded-xl mb-6
-          transition-all duration-300 hover:scale-[1.02] hover:shadow-lg active:scale-95 animate-fade-in-up">
-          <Plus className="w-5 h-5 mr-2" />
-          Nouveau relevé
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 rounded-xl mb-6
+              transition-all duration-300 hover:scale-[1.02] hover:shadow-lg active:scale-95 animate-fade-in-up">
+              <Plus className="w-5 h-5 mr-2" />
+              Nouveau relevé
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Nouveau relevé de température</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="equipment">Équipement</Label>
+                <Select value={selectedEquipment} onValueChange={setSelectedEquipment}>
+                  <SelectTrigger id="equipment">
+                    <SelectValue placeholder="Sélectionner un équipement" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {equipments.map((eq) => (
+                      <SelectItem key={eq} value={eq}>
+                        {eq}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="temperature">Température (°C)</Label>
+                <Input
+                  id="temperature"
+                  type="number"
+                  placeholder="Ex: 3"
+                  value={temperature}
+                  onChange={(e) => setTemperature(e.target.value)}
+                />
+              </div>
+              <Button 
+                onClick={handleSubmit} 
+                className="w-full"
+                disabled={!selectedEquipment || !temperature}
+              >
+                Enregistrer
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <h3 className="text-lg font-semibold">Derniers relevés</h3>
@@ -54,8 +128,7 @@ const Temperatures = () => {
                     {fridge.temp}
                   </p>
                 </div>
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-medium
-                  animate-pulse-soft shadow-sm">
+                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                   Conforme
                 </span>
               </div>

@@ -6,10 +6,15 @@ import BottomNav from "@/components/BottomNav";
 
 const PersonnelSettings = () => {
   const personnel = [
-    { name: "Marie Dupont", role: "Manager", status: "active" },
-    { name: "Jean Martin", role: "Chef de cuisine", status: "active" },
-    { name: "Sophie Bernard", role: "Aide-cuisinier", status: "active" },
-    { name: "Thomas Petit", role: "Plongeur", status: "inactive" },
+    { name: "Hugo", role: "Équipier", status: "active" },
+    { name: "Florian", role: "Équipier", status: "active" },
+    { name: "Lorraine", role: "Équipier", status: "active" },
+    { name: "Lauria", role: "Équipier", status: "active" },
+    { name: "Tim Eliot", role: "Équipier", status: "active" },
+    { name: "Aymene", role: "Équipier", status: "active" },
+    { name: "Meriem", role: "Équipier", status: "active" },
+    { name: "Sy'RAI", role: "Équipier", status: "active" },
+    { name: "Djali", role: "Équipier", status: "active" },
   ];
 
   return (
