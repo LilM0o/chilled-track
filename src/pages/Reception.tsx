@@ -1,4 +1,4 @@
-import { ArrowLeft, Truck, Plus } from "lucide-react";
+import { ArrowLeft, Truck, Plus, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
@@ -6,18 +6,37 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 const Reception = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState("");
   const [temperature, setTemperature] = useState("");
   const [articles, setArticles] = useState("");
+  const [suppliers, setSuppliers] = useState([
+    "Pedrero",
+    "Monin",
+    "Carte D'or",
+    "Metro",
+    "Delidrinks",
+  ]);
+  const [newSupplier, setNewSupplier] = useState("");
+  const [showAddSupplier, setShowAddSupplier] = useState(false);
 
   const deliveries = [
     { supplier: "Fruits & Légumes Bio", date: "04/11/2025", temp: "4°C", status: "ok" },
     { supplier: "Boucherie Centrale", date: "03/11/2025", temp: "2°C", status: "ok" },
     { supplier: "Produits Laitiers", date: "02/11/2025", temp: "5°C", status: "ok" },
   ];
+
+  const handleAddSupplier = () => {
+    if (newSupplier.trim()) {
+      setSuppliers([...suppliers, newSupplier.trim()]);
+      setSupplier(newSupplier.trim());
+      setNewSupplier("");
+      setShowAddSupplier(false);
+    }
+  };
 
   const handleSubmit = () => {
     if (supplier && temperature) {
@@ -26,6 +45,7 @@ const Reception = () => {
       setSupplier("");
       setTemperature("");
       setArticles("");
+      setShowAddSupplier(false);
     }
   };
 
@@ -63,14 +83,67 @@ const Reception = () => {
               <DialogTitle>Nouvelle réception</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="supplier">Fournisseur</Label>
-                <Input
-                  id="supplier"
-                  placeholder="Nom du fournisseur"
-                  value={supplier}
-                  onChange={(e) => setSupplier(e.target.value)}
-                />
+              <div className="space-y-3">
+                <Label>Sélectionner un fournisseur</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {suppliers.map((sup) => (
+                    <Button
+                      key={sup}
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "h-auto py-3 px-4 text-sm font-normal transition-all duration-200",
+                        supplier === sup
+                          ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground"
+                          : "hover:bg-accent"
+                      )}
+                      onClick={() => setSupplier(sup)}
+                    >
+                      {sup}
+                    </Button>
+                  ))}
+                </div>
+                {!showAddSupplier ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => setShowAddSupplier(true)}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Ajouter un fournisseur
+                  </Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Nom du fournisseur"
+                      value={newSupplier}
+                      onChange={(e) => setNewSupplier(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleAddSupplier();
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      size="icon"
+                      onClick={handleAddSupplier}
+                      disabled={!newSupplier.trim()}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => {
+                        setShowAddSupplier(false);
+                        setNewSupplier("");
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="articles">Nombre d'articles (optionnel)</Label>

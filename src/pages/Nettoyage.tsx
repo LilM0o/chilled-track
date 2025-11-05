@@ -5,7 +5,7 @@ import BottomNav from "@/components/BottomNav";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const Nettoyage = () => {
   const [open, setOpen] = useState(false);
@@ -126,23 +126,26 @@ const Nettoyage = () => {
             <DialogTitle>Valider la tâche</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <p className="text-sm text-muted-foreground">
-              Qui a effectué cette tâche ?
-            </p>
-            <div className="space-y-2">
-              <Label htmlFor="person">Personne</Label>
-              <Select value={selectedPerson} onValueChange={setSelectedPerson}>
-                <SelectTrigger id="person">
-                  <SelectValue placeholder="Sélectionner une personne" />
-                </SelectTrigger>
-                <SelectContent>
-                  {personnel.map((person) => (
-                    <SelectItem key={person} value={person}>
-                      {person}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="space-y-3">
+              <Label>Qui a effectué cette tâche ?</Label>
+              <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
+                {personnel.map((person) => (
+                  <Button
+                    key={person}
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      "h-auto py-3 px-4 text-sm font-normal transition-all duration-200",
+                      selectedPerson === person
+                        ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground"
+                        : "hover:bg-accent"
+                    )}
+                    onClick={() => setSelectedPerson(person)}
+                  >
+                    {person}
+                  </Button>
+                ))}
+              </div>
             </div>
             <Button 
               onClick={handleConfirmValidation} 

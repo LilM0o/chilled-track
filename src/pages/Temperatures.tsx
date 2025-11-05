@@ -5,8 +5,8 @@ import BottomNav from "@/components/BottomNav";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 const Temperatures = () => {
   const [open, setOpen] = useState(false);
@@ -75,20 +75,26 @@ const Temperatures = () => {
               <DialogTitle>Nouveau relevé de température</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="equipment">Équipement</Label>
-                <Select value={selectedEquipment} onValueChange={setSelectedEquipment}>
-                  <SelectTrigger id="equipment">
-                    <SelectValue placeholder="Sélectionner un équipement" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {equipments.map((eq) => (
-                      <SelectItem key={eq} value={eq}>
-                        {eq}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-3">
+                <Label>Sélectionner un équipement</Label>
+                <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
+                  {equipments.map((eq) => (
+                    <Button
+                      key={eq}
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "h-auto py-3 px-4 text-sm font-normal transition-all duration-200",
+                        selectedEquipment === eq
+                          ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground"
+                          : "hover:bg-accent"
+                      )}
+                      onClick={() => setSelectedEquipment(eq)}
+                    >
+                      {eq}
+                    </Button>
+                  ))}
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="temperature">Température (°C)</Label>
