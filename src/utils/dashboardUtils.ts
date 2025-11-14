@@ -18,6 +18,39 @@ interface CleaningStatus {
   statusText: string;
 }
 
+interface Task {
+  name: string;
+  frequency: string;
+  status: "done" | "pending";
+  time?: string;
+  person?: string;
+  category: string;
+  completedTimestamp?: number;
+}
+
+const resetExpiredTasks = (tasks: Task[]): Task[] => {
+  const now = new Date();
+  
+  return tasks.map(task => {
+    if (task.status === 'done' && task.completedTimestamp) {
+      const completedDate = new Date(task.completedTimestamp);
+      const daysSince = Math.floor((now.getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // Reset logic based on frequency
+      if (task.frequency === 'Quotidien' && daysSince >= 1) {
+        return { ...task, status: 'pending', time: undefined, person: undefined, completedTimestamp: undefined };
+      }
+      if (task.frequency === 'Hebdomadaire' && daysSince >= 7) {
+        return { ...task, status: 'pending', time: undefined, person: undefined, completedTimestamp: undefined };
+      }
+      if (task.frequency === 'Mensuel' && daysSince >= 30) {
+        return { ...task, status: 'pending', time: undefined, person: undefined, completedTimestamp: undefined };
+      }
+    }
+    return task;
+  });
+};
+
 export const getTemperatureStatus = (): TemperatureStatus => {
   // Load all temperature readings
   const readingsStr = localStorage.getItem('temperatureReadings');
@@ -99,11 +132,20 @@ export const getTemperatureStatus = (): TemperatureStatus => {
 export const getCleaningStatus = (): CleaningStatus => {
   // Load tasks from localStorage
   const tasksStr = localStorage.getItem('cleaningTasks');
-  let tasks: any[] = [];
+  let tasks: Task[] = [];
   
   if (tasksStr) {
     try {
       tasks = JSON.parse(tasksStr);
+      // Reset expired tasks
+      const resetTasks = resetExpiredTasks(tasks);
+      
+      // Save back if any tasks were reset
+      if (JSON.stringify(tasks) !== JSON.stringify(resetTasks)) {
+        localStorage.setItem('cleaningTasks', JSON.stringify(resetTasks));
+        window.dispatchEvent(new Event('tasksUpdated'));
+        tasks = resetTasks;
+      }
     } catch (e) {
       tasks = [];
     }

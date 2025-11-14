@@ -1,6 +1,7 @@
 import { Package, Thermometer, SprayCan, Truck, BarChart3, Settings } from "lucide-react";
 import ModuleCard from "@/components/ModuleCard";
 import StatusCard from "@/components/StatusCard";
+import DateTimeDisplay from "@/components/DateTimeDisplay";
 import { useState, useEffect } from "react";
 import { getTemperatureStatus, getCleaningStatus } from "@/utils/dashboardUtils";
 
@@ -87,8 +88,11 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-8">
       {/* Header */}
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
-        <div className="max-w-screen-xl mx-auto flex items-center justify-center">
+        <div className="max-w-screen-xl mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-bold text-primary">HACCP Pro</h1>
+          <div className="hidden md:block">
+            <DateTimeDisplay />
+          </div>
         </div>
       </header>
 

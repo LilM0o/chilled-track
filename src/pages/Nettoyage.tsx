@@ -13,6 +13,36 @@ interface Task {
   time?: string;
   person?: string;
   category: string;
+  completedTimestamp?: number;
+}
+
+const resetExpiredTasks = (tasks: Task[]): { tasks: Task[], resetCount: number } => {
+  const now = new Date();
+  let resetCount = 0;
+  
+  const resetTasks = tasks.map(task => {
+    if (task.status === 'done' && task.completedTimestamp) {
+      const completedDate = new Date(task.completedTimestamp);
+      const daysSince = Math.floor((now.getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // Reset logic based on frequency
+      if (task.frequency === 'Quotidien' && daysSince >= 1) {
+        resetCount++;
+        return { ...task, status: 'pending' as const, time: undefined, person: undefined, completedTimestamp: undefined };
+      }
+      if (task.frequency === 'Hebdomadaire' && daysSince >= 7) {
+        resetCount++;
+        return { ...task, status: 'pending' as const, time: undefined, person: undefined, completedTimestamp: undefined };
+      }
+      if (task.frequency === 'Mensuel' && daysSince >= 30) {
+        resetCount++;
+        return { ...task, status: 'pending' as const, time: undefined, person: undefined, completedTimestamp: undefined };
+      }
+    }
+    return task;
+  });
+  
+  return { tasks: resetTasks, resetCount };
 }
 
 const Nettoyage = () => {
@@ -74,29 +104,50 @@ const Nettoyage = () => {
     const stored = localStorage.getItem('cleaningTasks');
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const parsedTasks = JSON.parse(stored);
+        const { tasks: resetTasks } = resetExpiredTasks(parsedTasks);
+        return resetTasks;
       } catch (e) {
         return [
-          { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production" },
+          { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production", completedTimestamp: Date.now() - 86400000 },
           { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
           { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
           { name: "Nettoyage plan de travail", frequency: "Quotidien", status: "pending", category: "Production" },
           { name: "Vidange bacs à graisse", frequency: "Hebdomadaire", status: "pending", category: "Production" },
           { name: "Désinfection poignées", frequency: "Quotidien", status: "pending", category: "Production" },
-          { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production" },
+          { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production", completedTimestamp: Date.now() - 2592000000 },
         ];
       }
     }
     return [
-      { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production" },
+      { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production", completedTimestamp: Date.now() - 86400000 },
       { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
       { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
       { name: "Nettoyage plan de travail", frequency: "Quotidien", status: "pending", category: "Production" },
       { name: "Vidange bacs à graisse", frequency: "Hebdomadaire", status: "pending", category: "Production" },
       { name: "Désinfection poignées", frequency: "Quotidien", status: "pending", category: "Production" },
-      { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production" },
+      { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production", completedTimestamp: Date.now() - 2592000000 },
     ];
   });
+
+  // Check for expired tasks on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('cleaningTasks');
+    if (stored) {
+      try {
+        const parsedTasks = JSON.parse(stored);
+        const { tasks: resetTasks, resetCount } = resetExpiredTasks(parsedTasks);
+        
+        if (resetCount > 0) {
+          setTasks(resetTasks);
+          localStorage.setItem('cleaningTasks', JSON.stringify(resetTasks));
+          window.dispatchEvent(new Event('tasksUpdated'));
+        }
+      } catch (e) {
+        console.error('Error resetting tasks:', e);
+      }
+    }
+  }, []);
 
   // Save tasks to localStorage whenever they change
   useEffect(() => {
@@ -122,7 +173,7 @@ const Nettoyage = () => {
       setTasks(prevTasks => 
         prevTasks.map((task, idx) => 
           idx === selectedTask 
-            ? { ...task, status: "done" as const, time, person: selectedPerson }
+            ? { ...task, status: "done" as const, time, person: selectedPerson, completedTimestamp: Date.now() }
             : task
         )
       );
