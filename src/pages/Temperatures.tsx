@@ -69,7 +69,33 @@ const Temperatures = () => {
 
   const handleSubmit = () => {
     if (selectedEquipment && temperature) {
-      // Ici, ajouter la logique pour sauvegarder le relevé
+      // Save reading to localStorage
+      const now = new Date();
+      const reading = {
+        equipmentName: selectedEquipment,
+        temperature: temperature,
+        timestamp: Date.now(),
+        date: now.toLocaleDateString('fr-FR'),
+        time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+      };
+      
+      // Load existing readings
+      const readingsStr = localStorage.getItem('temperatureReadings');
+      let readings = readingsStr ? JSON.parse(readingsStr) : [];
+      
+      // Add new reading
+      readings.push(reading);
+      
+      // Keep only last 30 days of readings
+      const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+      readings = readings.filter((r: any) => r.timestamp > thirtyDaysAgo);
+      
+      // Save back to localStorage
+      localStorage.setItem('temperatureReadings', JSON.stringify(readings));
+      
+      // Dispatch event for dashboard update
+      window.dispatchEvent(new Event('temperatureUpdated'));
+      
       setOpen(false);
       setSelectedEquipment("");
       setTemperature("");
