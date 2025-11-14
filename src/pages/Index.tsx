@@ -64,16 +64,16 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background pb-8">
       {/* Header */}
-      <header className="bg-gradient-to-r from-primary/95 via-accent/95 to-primary/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-lg sticky top-0 z-40 animate-fade-in border-b-2 border-primary/20">
+      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white drop-shadow-md">HACCP Pro</h1>
-          <div className="flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-2xl px-5 py-3 border border-white/30 shadow-md hover:shadow-lg hover:bg-white/25 transition-all duration-300">
-            <Calendar className="w-6 h-6 text-white drop-shadow" />
+          <h1 className="text-2xl font-bold text-primary">HACCP Pro</h1>
+          <div className="flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl px-5 py-3 border border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
+            <Calendar className="w-6 h-6 text-primary" />
             <div className="flex flex-col">
-              <p className="text-base font-bold text-white capitalize leading-tight drop-shadow">
+              <p className="text-base font-bold text-foreground capitalize leading-tight">
                 {format(currentDate, "EEEE", { locale: fr })}
               </p>
-              <p className="text-sm text-white/90 font-medium drop-shadow-sm">
+              <p className="text-sm text-muted-foreground font-medium">
                 {format(currentDate, "d MMMM yyyy", { locale: fr })}
               </p>
             </div>
