@@ -62,7 +62,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10 pb-8">
+    <div className="min-h-screen bg-background pb-8">
       {/* Header */}
       <header className="bg-gradient-to-r from-primary/95 via-accent/95 to-primary/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-lg sticky top-0 z-40 animate-fade-in border-b-2 border-primary/20">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between">
@@ -83,9 +83,9 @@ const Index = () => {
 
       <div className="max-w-screen-xl mx-auto px-6">
         {/* Greeting */}
-        <div className="mb-8 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 backdrop-blur-sm rounded-2xl px-6 py-5 border border-primary/20 shadow-md animate-fade-in">
+        <div className="mb-8">
           <p className="text-foreground text-lg">
-            Bonjour <span className="font-bold text-primary">Dreams Donuts</span>, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">2 tâches en attente</span>
+            Bonjour Dreams Donuts, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">2 tâches en attente</span>
           </p>
         </div>
 
@@ -97,8 +97,8 @@ const Index = () => {
         </div>
 
         {/* Dashboard Section */}
-        <section className="bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm rounded-3xl px-6 py-6 border border-primary/10 shadow-lg">
-          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Tableau à Bord</h2>
+        <section>
+          <h2 className="text-xl font-semibold mb-4 text-foreground">Tableau à Bord</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <StatusCard
               title="Température Frigos : OK"
