@@ -21,7 +21,42 @@ const Tracabilite = () => {
   const [barcode, setBarcode] = useState<string>("");
   const [lotNumber, setLotNumber] = useState<string>("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [entries, setEntries] = useState<TracabiliteEntry[]>([]);
+  const [entries, setEntries] = useState<TracabiliteEntry[]>(() => {
+    const saved = localStorage.getItem('tracabiliteEntries');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    // Données mock par défaut
+    return [
+      {
+        id: '1',
+        date: new Date(Date.now() - 86400000).toLocaleString('fr-FR'),
+        barcode: '3760050000000',
+        lotNumber: 'LOT123456',
+        supplier: 'Pedrero'
+      },
+      {
+        id: '2',
+        date: new Date(Date.now() - 172800000).toLocaleString('fr-FR'),
+        barcode: '3052910000000',
+        lotNumber: 'LOT789012',
+        supplier: 'Monin'
+      },
+      {
+        id: '3',
+        date: new Date(Date.now() - 259200000).toLocaleString('fr-FR'),
+        barcode: '3245678900000',
+        lotNumber: 'LOT345678',
+        supplier: 'Metro'
+      }
+    ];
+  });
+
+  // Save entries to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('tracabiliteEntries', JSON.stringify(entries));
+    window.dispatchEvent(new Event('tracabiliteUpdated'));
+  }, [entries]);
   
   // Load suppliers dynamically from localStorage
   const [suppliers, setSuppliers] = useState<string[]>(() => {

@@ -21,11 +21,25 @@ const Reception = () => {
   const [supplier, setSupplier] = useState("");
   const [category, setCategory] = useState("");
   const [temperature, setTemperature] = useState("");
-  const [receptions, setReceptions] = useState<Reception[]>([
-    { id: "1", supplier: "Fruits & Légumes Bio", date: "04/11/2025", temp: "4°C", status: "ok", category: "Fruits et Legumes" },
-    { id: "2", supplier: "Boucherie Centrale", date: "03/11/2025", temp: "2°C", status: "ok", category: "Viandes" },
-    { id: "3", supplier: "Produits Laitiers", date: "02/11/2025", temp: "5°C", status: "ok", category: "Crémerie" },
-  ]);
+  const [receptions, setReceptions] = useState<Reception[]>(() => {
+    const saved = localStorage.getItem('receptions');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    // Données mock par défaut
+    return [
+      { id: "1", supplier: "Metro", date: new Date().toLocaleDateString('fr-FR'), temp: "4°C", status: "ok", category: "Produits frais" },
+      { id: "2", supplier: "Carte D'or", date: new Date(Date.now() - 86400000).toLocaleDateString('fr-FR'), temp: "-18°C", status: "ok", category: "Surgelés" },
+      { id: "3", supplier: "Pedrero", date: new Date(Date.now() - 172800000).toLocaleDateString('fr-FR'), temp: "5°C", status: "ok", category: "Crémerie" },
+      { id: "4", supplier: "Monin", date: new Date(Date.now() - 259200000).toLocaleDateString('fr-FR'), temp: "20°C", status: "ok", category: "Epicerie" }
+    ];
+  });
+
+  // Save receptions to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('receptions', JSON.stringify(receptions));
+    window.dispatchEvent(new Event('receptionsUpdated'));
+  }, [receptions]);
   
   // Load suppliers dynamically from localStorage
   const [suppliers, setSuppliers] = useState<string[]>(() => {
