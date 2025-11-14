@@ -1,21 +1,21 @@
-import { ArrowLeft, Download, FileText, FileJson, FileSpreadsheet, Home } from "lucide-react";
+import { ArrowLeft, Download, FileText, FileSpreadsheet, Home, Sheet } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { exportToCSV, exportToJSON, exportToTXT } from "@/utils/exportData";
+import { exportToCSV, exportToXLSX, exportToPDF } from "@/utils/exportData";
 import { toast } from "sonner";
 
 const ExportSettings = () => {
-  const [selectedFormat, setSelectedFormat] = useState<"csv" | "txt" | "json" | null>(null);
+  const [selectedFormat, setSelectedFormat] = useState<"csv" | "xlsx" | "pdf" | null>(null);
   const [selectedData, setSelectedData] = useState<string[]>([]);
 
   const exportFormats = [
     { id: "csv", name: "CSV", icon: FileSpreadsheet, description: "Format tableur" },
-    { id: "txt", name: "TXT", icon: FileText, description: "Document texte" },
-    { id: "json", name: "JSON", icon: FileJson, description: "Format données" },
+    { id: "xlsx", name: "XLSX", icon: Sheet, description: "Format Excel" },
+    { id: "pdf", name: "PDF", icon: FileText, description: "Document PDF" },
   ];
 
   const dataTypes = [
@@ -67,11 +67,11 @@ const ExportSettings = () => {
           case 'csv':
             exportToCSV(combinedData, filename);
             break;
-          case 'json':
-            exportToJSON(combinedData, filename);
+          case 'xlsx':
+            exportToXLSX(combinedData, filename);
             break;
-          case 'txt':
-            exportToTXT(combinedData, filename);
+          case 'pdf':
+            exportToPDF(combinedData, filename);
             break;
         }
         toast.success("Export réussi !");
