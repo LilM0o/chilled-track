@@ -26,37 +26,68 @@ const ExportSettings = () => {
     { id: "historique", name: "Historique complet" },
   ];
 
+  const loadRealData = (): Record<string, any[]> => {
+    // Charger depuis localStorage
+    const temperatures = JSON.parse(localStorage.getItem('temperatureReadings') || '[]');
+    const cleaningTasks = JSON.parse(localStorage.getItem('cleaningTasks') || '[]');
+    const tracabilite = JSON.parse(localStorage.getItem('tracabiliteEntries') || '[]');
+    const receptions = JSON.parse(localStorage.getItem('receptions') || '[]');
+    
+    // Formater les données pour l'export
+    return {
+      temperatures: temperatures.map((t: any) => ({
+        Date: t.date,
+        Équipement: t.equipmentName,
+        Température: t.temperature,
+        Statut: "Conforme"
+      })),
+      nettoyage: cleaningTasks
+        .filter((t: any) => t.status === 'done')
+        .map((t: any) => ({
+          Date: t.time || new Date().toLocaleDateString('fr-FR'),
+          Tâche: t.name,
+          Catégorie: t.category,
+          Statut: "Terminé",
+          Personne: t.person || "N/A"
+        })),
+      tracabilite: tracabilite.map((t: any) => ({
+        Date: t.date,
+        Fournisseur: t.supplier,
+        "Code-barres": t.barcode,
+        "Numéro de lot": t.lotNumber
+      })),
+      reception: receptions.map((r: any) => ({
+        Date: r.date,
+        Fournisseur: r.supplier,
+        Catégorie: r.category,
+        Température: r.temp,
+        Conformité: r.status === 'ok' ? 'Conforme' : 'Non conforme'
+      }))
+    };
+  };
+
   const handleExport = () => {
     if (selectedFormat && selectedData.length > 0) {
-      // Simulation de données pour l'export
-      const mockData: Record<string, any[]> = {
-        temperatures: [
-          { date: "14/11/2024 10:00", equipment: "Frigo vitrine", temperature: "4°C", status: "Conforme" },
-          { date: "14/11/2024 14:00", equipment: "Chambre froide", temperature: "2°C", status: "Conforme" },
-        ],
-        nettoyage: [
-          { date: "14/11/2024", tache: "Nettoyage sols", categorie: "Sols et surfaces", statut: "Terminé" },
-          { date: "14/11/2024", tache: "Désinfection équipements", categorie: "Équipements", statut: "Terminé" },
-        ],
-        tracabilite: [
-          { date: "14/11/2024 09:30", fournisseur: "Pedrero", codeBarres: "3760050000000", numeroLot: "LOT123456" },
-          { date: "14/11/2024 11:00", fournisseur: "Monin", codeBarres: "3052910000000", numeroLot: "LOT789012" },
-        ],
-        reception: [
-          { date: "14/11/2024", fournisseur: "Metro", categorie: "Produits frais", temperature: "4°C", conformite: "Conforme" },
-          { date: "13/11/2024", fournisseur: "Carte D'or", categorie: "Surgelés", temperature: "-18°C", conformite: "Conforme" },
-        ],
-        historique: [
-          { module: "Températures", action: "Relevé température", date: "14/11/2024 10:00", utilisateur: "Hugo" },
-          { module: "Nettoyage", action: "Tâche terminée", date: "14/11/2024 09:00", utilisateur: "Florian" },
-        ],
-      };
+      const realData = loadRealData();
 
-      // Combine toutes les données sélectionnées
-      const combinedData = selectedData.flatMap(dataType => mockData[dataType] || []);
+      let combinedData: any[] = [];
+
+      // Gérer l'historique complet
+      if (selectedData.includes('historique')) {
+        // Combiner TOUTES les données avec une colonne Module
+        combinedData = [
+          ...realData.temperatures.map(d => ({ Module: 'Températures', ...d })),
+          ...realData.nettoyage.map(d => ({ Module: 'Nettoyage', ...d })),
+          ...realData.tracabilite.map(d => ({ Module: 'Traçabilité', ...d })),
+          ...realData.reception.map(d => ({ Module: 'Réception', ...d }))
+        ];
+      } else {
+        // Export sélectif
+        combinedData = selectedData.flatMap(dataType => realData[dataType] || []);
+      }
       
       if (combinedData.length === 0) {
-        toast.error("Aucune donnée à exporter");
+        toast.error("Aucune donnée disponible. Ajoutez des relevés, tâches ou produits avant d'exporter.");
         return;
       }
 
