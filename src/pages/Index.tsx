@@ -66,15 +66,14 @@ const Index = () => {
       {/* Header */}
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between">
-          <div className="w-32" /> {/* Spacer for centering */}
           <h1 className="text-2xl font-bold text-primary">HACCP Pro</h1>
-          <div className="flex items-center gap-2 bg-primary/10 rounded-2xl px-4 py-2">
-            <Calendar className="w-5 h-5 text-primary" />
-            <div className="text-right">
-              <p className="text-sm font-semibold text-foreground capitalize">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl px-5 py-3 border border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
+            <Calendar className="w-6 h-6 text-primary" />
+            <div className="flex flex-col">
+              <p className="text-base font-bold text-foreground capitalize leading-tight">
                 {format(currentDate, "EEEE", { locale: fr })}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground font-medium">
                 {format(currentDate, "d MMMM yyyy", { locale: fr })}
               </p>
             </div>
