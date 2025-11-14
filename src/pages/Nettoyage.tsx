@@ -69,12 +69,34 @@ const Nettoyage = () => {
     };
   }, []);
 
-  const [tasks, setTasks] = useState<Task[]>([
-    { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production" },
-    { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
-    { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
-    { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production" },
-  ]);
+  // Load tasks from localStorage with fallback
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const stored = localStorage.getItem('cleaningTasks');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        return [
+          { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production" },
+          { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
+          { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
+          { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production" },
+        ];
+      }
+    }
+    return [
+      { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production" },
+      { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
+      { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
+      { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production" },
+    ];
+  });
+
+  // Save tasks to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('cleaningTasks', JSON.stringify(tasks));
+    window.dispatchEvent(new Event('tasksUpdated'));
+  }, [tasks]);
 
   const completedTasks = tasks.filter(t => t.status === "done");
   const pendingTasks = tasks.filter(t => t.status === "pending");

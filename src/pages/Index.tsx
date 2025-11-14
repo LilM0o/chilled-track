@@ -1,8 +1,43 @@
 import { Package, Thermometer, SprayCan, Truck, BarChart3, Settings } from "lucide-react";
 import ModuleCard from "@/components/ModuleCard";
 import StatusCard from "@/components/StatusCard";
+import { useState, useEffect } from "react";
+import { getTemperatureStatus, getCleaningStatus } from "@/utils/dashboardUtils";
 
 const Index = () => {
+  const [tempStatus, setTempStatus] = useState({
+    isOk: true,
+    overdueCount: 0,
+    statusText: "OK",
+    lastReadingText: "Chargement..."
+  });
+
+  const [cleaningStatus, setCleaningStatus] = useState({
+    pendingCount: 0,
+    statusText: "Chargement..."
+  });
+
+  useEffect(() => {
+    const updateDashboard = () => {
+      setTempStatus(getTemperatureStatus());
+      setCleaningStatus(getCleaningStatus());
+    };
+    
+    updateDashboard();
+    
+    // Listen for changes
+    window.addEventListener('storage', updateDashboard);
+    window.addEventListener('temperatureUpdated', updateDashboard);
+    window.addEventListener('tasksUpdated', updateDashboard);
+    window.addEventListener('equipmentsUpdated', updateDashboard);
+    
+    return () => {
+      window.removeEventListener('storage', updateDashboard);
+      window.removeEventListener('temperatureUpdated', updateDashboard);
+      window.removeEventListener('tasksUpdated', updateDashboard);
+      window.removeEventListener('equipmentsUpdated', updateDashboard);
+    };
+  }, []);
   const modules = [
     {
       title: "Traçabilité Produits",
@@ -61,7 +96,9 @@ const Index = () => {
         {/* Greeting */}
         <div className="mb-8">
           <p className="text-foreground text-lg">
-            Bonjour Dreams Donuts, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">2 tâches en attente</span>
+            Bonjour Dreams Donuts, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {cleaningStatus.pendingCount + tempStatus.overdueCount} tâche{(cleaningStatus.pendingCount + tempStatus.overdueCount) > 1 ? 's' : ''} en attente
+            </span>
           </p>
         </div>
 
@@ -74,19 +111,25 @@ const Index = () => {
 
         {/* Dashboard Section */}
         <section>
-          <h2 className="text-xl font-semibold mb-4 text-foreground">Tableau à Bord</h2>
+          <h2 className="text-xl font-semibold mb-4 text-foreground">Tableau de Bord</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <StatusCard
-              title="Température Frigos : OK"
-              subtitle="(Dernière relevé il ya 10 min)"
-              colorClass="bg-module-blue text-module-blue-foreground"
+              title={`Température Frigos : ${tempStatus.statusText}`}
+              subtitle={tempStatus.lastReadingText}
+              colorClass={tempStatus.isOk 
+                ? "bg-module-blue text-module-blue-foreground" 
+                : "bg-red-500 text-white"}
               to="/temperatures"
+              count={tempStatus.overdueCount}
+              variant={tempStatus.isOk ? "success" : "danger"}
             />
             <StatusCard
-              title="Plan de Nettoyage :"
-              subtitle="3 tâches et attente"
+              title="Plan de Nettoyage"
+              subtitle={cleaningStatus.statusText}
               colorClass="bg-module-green text-module-green-foreground"
               to="/nettoyage"
+              count={cleaningStatus.pendingCount}
+              variant={cleaningStatus.pendingCount > 0 ? "warning" : "success"}
             />
           </div>
         </section>
