@@ -2,7 +2,6 @@ import { ArrowLeft, Users, Plus, UserCircle, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import BottomNav from "@/components/BottomNav";
 
 const PersonnelSettings = () => {
   const personnel = [
@@ -18,9 +17,14 @@ const PersonnelSettings = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+    <div className="min-h-screen bg-background pb-8">
+      <header className="bg-module-pink/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="w-11 h-11">
+              <Home className="w-6 h-6" />
+            </Button>
+          </Link>
           <Link to="/parametres">
             <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
               <ArrowLeft className="w-5 h-5" />
@@ -34,12 +38,6 @@ const PersonnelSettings = () => {
       </header>
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="bg-module-purple text-module-purple-foreground rounded-3xl p-8 mb-6 text-center animate-scale-in shadow-lg">
-          <Users className="w-16 h-16 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Gestion du personnel</h2>
-          <p className="text-sm opacity-75">Gérez les utilisateurs et leurs rôles</p>
-        </div>
-
         <div className="space-y-3">
           {personnel.map((person, i) => (
             <div 

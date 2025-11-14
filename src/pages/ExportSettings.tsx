@@ -41,11 +41,11 @@ const ExportSettings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
+      <header className="bg-module-pink/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon">
-              <Home className="w-5 h-5" />
+            <Button variant="ghost" size="icon" className="w-11 h-11">
+              <Home className="w-6 h-6" />
             </Button>
           </Link>
           <Link to="/parametres">
