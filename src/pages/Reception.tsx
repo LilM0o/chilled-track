@@ -12,6 +12,7 @@ interface Reception {
   supplier: string;
   category: string;
   date: string;
+  temp: string;
   status: string;
 }
 
@@ -19,25 +20,12 @@ const Reception = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState("");
   const [category, setCategory] = useState("");
-  const [receptions, setReceptions] = useState<Reception[]>(() => {
-    const saved = localStorage.getItem('receptions');
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    // Données mock par défaut
-    return [
-      { id: "1", supplier: "Metro", date: new Date().toLocaleDateString('fr-FR'), status: "ok", category: "Produits frais" },
-      { id: "2", supplier: "Carte D'or", date: new Date(Date.now() - 86400000).toLocaleDateString('fr-FR'), status: "ok", category: "Surgelés" },
-      { id: "3", supplier: "Pedrero", date: new Date(Date.now() - 172800000).toLocaleDateString('fr-FR'), status: "ok", category: "Crémerie" },
-      { id: "4", supplier: "Monin", date: new Date(Date.now() - 259200000).toLocaleDateString('fr-FR'), status: "ok", category: "Epicerie" }
-    ];
-  });
-
-  // Save receptions to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('receptions', JSON.stringify(receptions));
-    window.dispatchEvent(new Event('receptionsUpdated'));
-  }, [receptions]);
+  const [temperature, setTemperature] = useState("");
+  const [receptions, setReceptions] = useState<Reception[]>([
+    { id: "1", supplier: "Fruits & Légumes Bio", date: "04/11/2025", temp: "4°C", status: "ok", category: "Fruits et Legumes" },
+    { id: "2", supplier: "Boucherie Centrale", date: "03/11/2025", temp: "2°C", status: "ok", category: "Viandes" },
+    { id: "3", supplier: "Produits Laitiers", date: "02/11/2025", temp: "5°C", status: "ok", category: "Crémerie" },
+  ]);
   
   // Load suppliers dynamically from localStorage
   const [suppliers, setSuppliers] = useState<string[]>(() => {
@@ -102,6 +90,7 @@ const Reception = () => {
         supplier,
         category,
         date: new Date().toLocaleDateString('fr-FR'),
+        temp: temperature || "N/A",
         status: "ok",
       };
       
@@ -109,6 +98,7 @@ const Reception = () => {
       setOpen(false);
       setSupplier("");
       setCategory("");
+      setTemperature("");
       setShowAddSupplier(false);
     }
   };
@@ -225,6 +215,16 @@ const Reception = () => {
                 </div>
               </div>
               
+              <div className="space-y-3">
+                <Label>Température camion (optionnel)</Label>
+                <Input
+                  type="text"
+                  placeholder="Ex: 4°C"
+                  value={temperature}
+                  onChange={(e) => setTemperature(e.target.value)}
+                />
+              </div>
+              
               <Button
                 onClick={handleSubmit} 
                 className="w-full"
@@ -247,20 +247,17 @@ const Reception = () => {
               style={{ animationDelay: `${0.3 + i * 0.1}s` }}
             >
               <div className="flex justify-between items-start mb-2">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-medium">{delivery.supplier}</h4>
-                    <span className={cn(
-                      "px-2 py-0.5 rounded-full text-xs font-medium border-2",
-                      categories.find(c => c.name === delivery.category)?.color || "bg-gray-200 border-gray-400"
-                    )}>
-                      {delivery.category}
-                    </span>
-                  </div>
+                <div>
+                  <h4 className="font-medium">{delivery.supplier}</h4>
                   <p className="text-sm text-muted-foreground">{delivery.date}</p>
                 </div>
                 <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                   Conforme
+                </span>
+              </div>
+              <div className="flex items-center gap-4 text-sm">
+                <span className="text-muted-foreground">
+                  Température camion: <strong>{delivery.temp}</strong>
                 </span>
               </div>
             </div>

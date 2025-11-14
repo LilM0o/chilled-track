@@ -1,6 +1,6 @@
 import { Package, Thermometer, SprayCan, Truck, BarChart3, Settings } from "lucide-react";
 import ModuleCard from "@/components/ModuleCard";
-import DateTimeDisplay from "@/components/DateTimeDisplay";
+import StatusCard from "@/components/StatusCard";
 
 const Index = () => {
   const modules = [
@@ -52,11 +52,8 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-8">
       {/* Header */}
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
-        <div className="max-w-screen-xl mx-auto flex items-center justify-between">
+        <div className="max-w-screen-xl mx-auto flex items-center justify-center">
           <h1 className="text-2xl font-bold text-primary">HACCP Pro</h1>
-          <div className="hidden md:block">
-            <DateTimeDisplay />
-          </div>
         </div>
       </header>
 
@@ -64,18 +61,35 @@ const Index = () => {
         {/* Greeting */}
         <div className="mb-8">
           <p className="text-foreground text-lg">
-            Bonjour Dreams Donuts, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              bienvenue sur HACCP Pro
-            </span>
+            Bonjour Dreams Donuts, <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">2 tâches en attente</span>
           </p>
         </div>
 
         {/* Module Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
           {modules.map((module) => (
             <ModuleCard key={module.to} {...module} />
           ))}
         </div>
+
+        {/* Dashboard Section */}
+        <section>
+          <h2 className="text-xl font-semibold mb-4 text-foreground">Tableau à Bord</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <StatusCard
+              title="Température Frigos : OK"
+              subtitle="(Dernière relevé il ya 10 min)"
+              colorClass="bg-module-blue text-module-blue-foreground"
+              to="/temperatures"
+            />
+            <StatusCard
+              title="Plan de Nettoyage :"
+              subtitle="3 tâches et attente"
+              colorClass="bg-module-green text-module-green-foreground"
+              to="/nettoyage"
+            />
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -92,7 +92,7 @@ const Historique = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <header className="bg-module-yellow backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
+      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon">

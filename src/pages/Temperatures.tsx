@@ -24,7 +24,7 @@ const Temperatures = () => {
         return [];
       }
     }
-    const defaultEquipments = [
+    return [
       "Frigo aliments",
       "Réfrigérateur Bar",
       "Réfrigérateur Boissons 1",
@@ -36,23 +36,7 @@ const Temperatures = () => {
       "Congélateur 4",
       "Congélateur Glaces",
     ];
-    return defaultEquipments;
   });
-
-  // Initialize default temperature readings if none exist
-  useEffect(() => {
-    const readingsStr = localStorage.getItem('temperatureReadings');
-    if (!readingsStr) {
-      const now = Date.now();
-      const defaultReadings = [
-        { equipmentName: "Frigo aliments", temperature: "3°C", timestamp: now - 600000, date: new Date(now - 600000).toLocaleDateString('fr-FR'), time: new Date(now - 600000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) },
-        { equipmentName: "Réfrigérateur Bar", temperature: "4°C", timestamp: now - 1500000, date: new Date(now - 1500000).toLocaleDateString('fr-FR'), time: new Date(now - 1500000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) },
-        { equipmentName: "Congélateur 1", temperature: "-18°C", timestamp: now - 3600000, date: new Date(now - 3600000).toLocaleDateString('fr-FR'), time: new Date(now - 3600000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) },
-      ];
-      localStorage.setItem('temperatureReadings', JSON.stringify(defaultReadings));
-      window.dispatchEvent(new Event('temperatureUpdated'));
-    }
-  }, []);
 
   // Sync with localStorage changes
   useEffect(() => {
@@ -85,33 +69,7 @@ const Temperatures = () => {
 
   const handleSubmit = () => {
     if (selectedEquipment && temperature) {
-      // Save reading to localStorage
-      const now = new Date();
-      const reading = {
-        equipmentName: selectedEquipment,
-        temperature: temperature,
-        timestamp: Date.now(),
-        date: now.toLocaleDateString('fr-FR'),
-        time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
-      };
-      
-      // Load existing readings
-      const readingsStr = localStorage.getItem('temperatureReadings');
-      let readings = readingsStr ? JSON.parse(readingsStr) : [];
-      
-      // Add new reading
-      readings.push(reading);
-      
-      // Keep only last 30 days of readings
-      const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-      readings = readings.filter((r: any) => r.timestamp > thirtyDaysAgo);
-      
-      // Save back to localStorage
-      localStorage.setItem('temperatureReadings', JSON.stringify(readings));
-      
-      // Dispatch event for dashboard update
-      window.dispatchEvent(new Event('temperatureUpdated'));
-      
+      // Ici, ajouter la logique pour sauvegarder le relevé
       setOpen(false);
       setSelectedEquipment("");
       setTemperature("");

@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface Person {
   id: string;
@@ -37,15 +37,6 @@ const PersonnelSettings = () => {
     name: "", 
     status: "active" 
   });
-
-  // Initialize personnel in localStorage if not present
-  useEffect(() => {
-    const saved = localStorage.getItem('personnel');
-    if (!saved && personnel.length > 0) {
-      localStorage.setItem('personnel', JSON.stringify(personnel));
-      window.dispatchEvent(new Event('personnelUpdated'));
-    }
-  }, []);
 
   const handleAdd = () => {
     if (formData.name.trim()) {
