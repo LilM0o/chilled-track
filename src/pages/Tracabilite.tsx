@@ -5,8 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
-import { Camera as CapCamera, CameraResultType } from '@capacitor/camera';
 
 const Tracabilite = () => {
   const [open, setOpen] = useState(false);
@@ -23,36 +21,10 @@ const Tracabilite = () => {
   ];
 
   const handleScanBarcode = async () => {
-    try {
-      // Request camera permissions
-      await BarcodeScanner.requestPermissions();
-      
-      // Start scanning
-      const result = await BarcodeScanner.scan();
-      
-      if (result.barcodes && result.barcodes.length > 0) {
-        const scannedCode = result.barcodes[0].displayValue;
-        setBarcode(scannedCode);
-        
-        // Take a photo
-        const photo = await CapCamera.getPhoto({
-          quality: 90,
-          allowEditing: false,
-          resultType: CameraResultType.DataUrl
-        });
-        
-        if (photo.dataUrl) {
-          setScannedImage(photo.dataUrl);
-        }
-        
-        // Open the form dialog
-        setOpen(true);
-      }
-    } catch (error) {
-      console.error('Scanning error:', error);
-      // For web/desktop testing, open dialog without actual scanning
-      setOpen(true);
-    }
+    // Pour l'instant, ouvrir le formulaire directement
+    // La fonctionnalité de scan nécessite une tablette Android avec Capacitor configuré
+    console.log('Scan de code-barres - Nécessite Capacitor sur Android');
+    setOpen(true);
   };
 
   const handleSubmit = () => {
