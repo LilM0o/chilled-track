@@ -137,15 +137,6 @@ export const getCleaningStatus = (): CleaningStatus => {
   if (tasksStr) {
     try {
       tasks = JSON.parse(tasksStr);
-      // Reset expired tasks
-      const resetTasks = resetExpiredTasks(tasks);
-      
-      // Save back if any tasks were reset
-      if (JSON.stringify(tasks) !== JSON.stringify(resetTasks)) {
-        localStorage.setItem('cleaningTasks', JSON.stringify(resetTasks));
-        window.dispatchEvent(new Event('tasksUpdated'));
-        tasks = resetTasks;
-      }
     } catch (e) {
       tasks = [];
     }

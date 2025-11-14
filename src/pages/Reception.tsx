@@ -20,7 +20,6 @@ const Reception = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState("");
   const [category, setCategory] = useState("");
-  const [temperature, setTemperature] = useState("");
   const [receptions, setReceptions] = useState<Reception[]>(() => {
     const saved = localStorage.getItem('receptions');
     if (saved) {
@@ -104,7 +103,7 @@ const Reception = () => {
         supplier,
         category,
         date: new Date().toLocaleDateString('fr-FR'),
-        temp: temperature || "N/A",
+        temp: "N/A",
         status: "ok",
       };
       
@@ -112,7 +111,6 @@ const Reception = () => {
       setOpen(false);
       setSupplier("");
       setCategory("");
-      setTemperature("");
       setShowAddSupplier(false);
     }
   };
@@ -227,16 +225,6 @@ const Reception = () => {
                     </Button>
                   ))}
                 </div>
-              </div>
-              
-              <div className="space-y-3">
-                <Label>Température camion (optionnel)</Label>
-                <Input
-                  type="text"
-                  placeholder="Ex: 4°C"
-                  value={temperature}
-                  onChange={(e) => setTemperature(e.target.value)}
-                />
               </div>
               
               <Button
