@@ -1,7 +1,6 @@
-import { ArrowLeft, Settings, Bell, Thermometer, Users, Refrigerator, SprayCan } from "lucide-react";
+import { ArrowLeft, Settings, Bell, Thermometer, Users, Refrigerator, SprayCan, Download, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import BottomNav from "@/components/BottomNav";
 
 const Parametres = () => {
   const settingsSections = [
@@ -10,15 +9,16 @@ const Parametres = () => {
     { icon: Users, title: "Personnel", description: "Gérer les utilisateurs et rôles" },
     { icon: Refrigerator, title: "Équipements", description: "Configurer les frigos et équipements" },
     { icon: SprayCan, title: "Plan de nettoyage", description: "Configurer les tâches de nettoyage" },
+    { icon: Download, title: "Export de données", description: "Exporter en CSV, PDF ou JSON" },
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-8">
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
-              <ArrowLeft className="w-5 h-5" />
+              <Home className="w-5 h-5" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Paramètres</h1>
@@ -36,7 +36,7 @@ const Parametres = () => {
         <div className="space-y-3 animate-fade-in-up">
           {settingsSections.map((section, i) => {
             const Icon = section.icon;
-            const routes = ['/parametres/notifications', '/parametres/temperatures', '/parametres/personnel', '/parametres/equipements', '/parametres/nettoyage'];
+            const routes = ['/parametres/notifications', '/parametres/temperatures', '/parametres/personnel', '/parametres/equipements', '/parametres/nettoyage', '/parametres/export'];
             return (
               <Link
                 key={i}
@@ -62,7 +62,7 @@ const Parametres = () => {
 
         <div className="mt-8 bg-card rounded-2xl p-6 shadow-sm 
           animate-fade-in-up hover:shadow-md transition-shadow duration-300" 
-          style={{ animationDelay: "0.4s" }}
+          style={{ animationDelay: "0.6s" }}
         >
           <h3 className="font-semibold mb-4">À propos</h3>
           <div className="space-y-2 text-sm text-muted-foreground">
@@ -71,8 +71,6 @@ const Parametres = () => {
           </div>
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { ArrowLeft, Users, Plus, UserCircle } from "lucide-react";
+import { ArrowLeft, Users, Plus, UserCircle, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -64,8 +64,6 @@ const PersonnelSettings = () => {
           ))}
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };

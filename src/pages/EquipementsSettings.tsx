@@ -1,4 +1,4 @@
-import { ArrowLeft, Refrigerator, Plus, Snowflake, Wind } from "lucide-react";
+import { ArrowLeft, Refrigerator, Plus, Snowflake, Wind, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -72,8 +72,6 @@ const EquipementsSettings = () => {
           })}
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };

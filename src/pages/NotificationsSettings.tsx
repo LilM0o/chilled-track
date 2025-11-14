@@ -1,17 +1,21 @@
-import { ArrowLeft, Bell } from "lucide-react";
+import { ArrowLeft, Bell, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import BottomNav from "@/components/BottomNav";
 
 const NotificationsSettings = () => {
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-8">
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
+          <Link to="/">
+            <Button variant="ghost" size="icon">
+              <Home className="w-5 h-5" />
+            </Button>
+          </Link>
           <Link to="/parametres">
-            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
+            <Button variant="ghost" size="icon">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
@@ -78,8 +82,6 @@ const NotificationsSettings = () => {
           </div>
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };

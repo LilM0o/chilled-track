@@ -1,7 +1,6 @@
-import { ArrowLeft, Thermometer, Plus } from "lucide-react";
+import { ArrowLeft, Thermometer, Plus, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import BottomNav from "@/components/BottomNav";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
@@ -42,12 +41,12 @@ const Temperatures = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-8">
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
-              <ArrowLeft className="w-5 h-5" />
+              <Home className="w-5 h-5" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Températures Frigos</h1>
@@ -143,8 +142,6 @@ const Temperatures = () => {
           ))}
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };
