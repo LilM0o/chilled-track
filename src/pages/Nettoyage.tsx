@@ -109,24 +109,28 @@ const Nettoyage = () => {
         return resetTasks;
       } catch (e) {
         return [
-          { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production", completedTimestamp: Date.now() - 86400000 },
+          { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production", completedTimestamp: Date.now() },
           { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
           { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
           { name: "Nettoyage plan de travail", frequency: "Quotidien", status: "pending", category: "Production" },
           { name: "Vidange bacs à graisse", frequency: "Hebdomadaire", status: "pending", category: "Production" },
           { name: "Désinfection poignées", frequency: "Quotidien", status: "pending", category: "Production" },
-          { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production", completedTimestamp: Date.now() - 2592000000 },
+          { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production", completedTimestamp: Date.now() },
+          { name: "Nettoyage vitres", frequency: "Hebdomadaire", status: "pending", category: "Production" },
+          { name: "Désinfection sanitaires", frequency: "Quotidien", status: "pending", category: "Sanitaires" },
         ];
       }
     }
     return [
-      { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production", completedTimestamp: Date.now() - 86400000 },
+      { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production", completedTimestamp: Date.now() },
       { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
       { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
       { name: "Nettoyage plan de travail", frequency: "Quotidien", status: "pending", category: "Production" },
       { name: "Vidange bacs à graisse", frequency: "Hebdomadaire", status: "pending", category: "Production" },
       { name: "Désinfection poignées", frequency: "Quotidien", status: "pending", category: "Production" },
-      { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production", completedTimestamp: Date.now() - 2592000000 },
+      { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production", completedTimestamp: Date.now() },
+      { name: "Nettoyage vitres", frequency: "Hebdomadaire", status: "pending", category: "Production" },
+      { name: "Désinfection sanitaires", frequency: "Quotidien", status: "pending", category: "Sanitaires" },
     ];
   });
 

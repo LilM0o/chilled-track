@@ -32,11 +32,20 @@ const Index = () => {
     window.addEventListener('tasksUpdated', updateDashboard);
     window.addEventListener('equipmentsUpdated', updateDashboard);
     
+    // Refresh when page becomes visible
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        updateDashboard();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
     return () => {
       window.removeEventListener('storage', updateDashboard);
       window.removeEventListener('temperatureUpdated', updateDashboard);
       window.removeEventListener('tasksUpdated', updateDashboard);
       window.removeEventListener('equipmentsUpdated', updateDashboard);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
   const modules = [
