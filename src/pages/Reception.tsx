@@ -1,4 +1,4 @@
-import { ArrowLeft, Truck, Plus, Home } from "lucide-react";
+import { ArrowLeft, Truck, Plus, Home, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
