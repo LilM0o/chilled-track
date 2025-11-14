@@ -12,7 +12,7 @@ import Historique from "./pages/Historique";
 import Parametres from "./pages/Parametres";
 import Notifications from "./pages/Notifications";
 
-import NotificationsSettings from "./pages/NotificationsSettings";
+
 import TemperatureSettings from "./pages/TemperatureSettings";
 import PersonnelSettings from "./pages/PersonnelSettings";
 import EquipementsSettings from "./pages/EquipementsSettings";
@@ -37,7 +37,7 @@ const App = () => (
           <Route path="/reception" element={<Reception />} />
           <Route path="/historique" element={<Historique />} />
           <Route path="/parametres" element={<Parametres />} />
-          <Route path="/parametres/notifications" element={<NotificationsSettings />} />
+          
           <Route path="/parametres/temperatures" element={<TemperatureSettings />} />
           <Route path="/parametres/personnel" element={<PersonnelSettings />} />
           <Route path="/parametres/equipements" element={<EquipementsSettings />} />

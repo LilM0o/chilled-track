@@ -1,10 +1,20 @@
-import { ArrowLeft, Refrigerator, Plus, Snowflake, Wind, Home } from "lucide-react";
+import { ArrowLeft, Refrigerator, Plus, Snowflake, Wind, Home, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const EquipementsSettings = () => {
-  const equipments = [
+  const [open, setOpen] = useState(false);
+  const [newEquipmentName, setNewEquipmentName] = useState("");
+  const [newEquipmentType, setNewEquipmentType] = useState("");
+  const [newEquipmentTemp, setNewEquipmentTemp] = useState("");
+  
+  const [equipments, setEquipments] = useState([
     { name: "Frigo aliments", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
     { name: "Réfrigérateur Bar", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
     { name: "Réfrigérateur Boissons 1", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
@@ -15,11 +25,32 @@ const EquipementsSettings = () => {
     { name: "Congélateur 3", type: "Congélateur", temp: "-18°C", status: "ok", icon: Snowflake },
     { name: "Congélateur 4", type: "Congélateur", temp: "-20°C", status: "ok", icon: Snowflake },
     { name: "Congélateur Glaces", type: "Congélateur", temp: "-22°C", status: "ok", icon: Snowflake },
-  ];
+  ]);
+
+  const handleAddEquipment = () => {
+    if (newEquipmentName && newEquipmentType && newEquipmentTemp) {
+      const icon = newEquipmentType === "Réfrigérateur" ? Refrigerator : Snowflake;
+      setEquipments([...equipments, {
+        name: newEquipmentName,
+        type: newEquipmentType,
+        temp: newEquipmentTemp,
+        status: "ok",
+        icon
+      }]);
+      setOpen(false);
+      setNewEquipmentName("");
+      setNewEquipmentType("");
+      setNewEquipmentTemp("");
+    }
+  };
+
+  const handleDeleteEquipment = (index: number) => {
+    setEquipments(equipments.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-module-pink/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-pink backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon" className="w-11 h-11">
@@ -32,7 +63,7 @@ const EquipementsSettings = () => {
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Équipements</h1>
-          <Button size="icon" className="ml-auto rounded-xl">
+          <Button size="icon" className="ml-auto rounded-xl" onClick={() => setOpen(true)}>
             <Plus className="w-5 h-5" />
           </Button>
         </div>
@@ -65,11 +96,66 @@ const EquipementsSettings = () => {
                     <p className="text-sm text-muted-foreground">{equipment.type}</p>
                     <p className="text-sm font-medium text-primary mt-1">{equipment.temp}</p>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteEquipment(i)}
+                    className="hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             );
           })}
         </div>
+
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Ajouter un équipement</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="equipment-name">Nom de l'équipement</Label>
+                <Input
+                  id="equipment-name"
+                  placeholder="Ex: Frigo Bar"
+                  value={newEquipmentName}
+                  onChange={(e) => setNewEquipmentName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="equipment-type">Type</Label>
+                <Select value={newEquipmentType} onValueChange={setNewEquipmentType}>
+                  <SelectTrigger id="equipment-type">
+                    <SelectValue placeholder="Sélectionner un type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Réfrigérateur">Réfrigérateur</SelectItem>
+                    <SelectItem value="Congélateur">Congélateur</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="equipment-temp">Température cible</Label>
+                <Input
+                  id="equipment-temp"
+                  placeholder="Ex: 3°C ou -18°C"
+                  value={newEquipmentTemp}
+                  onChange={(e) => setNewEquipmentTemp(e.target.value)}
+                />
+              </div>
+              <Button 
+                onClick={handleAddEquipment} 
+                className="w-full"
+                disabled={!newEquipmentName || !newEquipmentType || !newEquipmentTemp}
+              >
+                Ajouter
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

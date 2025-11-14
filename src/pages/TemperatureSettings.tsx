@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 const TemperatureSettings = () => {
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-module-pink/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-pink backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon" className="w-11 h-11">
@@ -53,22 +53,6 @@ const TemperatureSettings = () => {
                 <div>
                   <Label htmlFor="freezer-max">Température maximale (°C)</Label>
                   <Input id="freezer-max" type="number" defaultValue="-18" className="mt-1" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card rounded-2xl p-5 shadow-sm">
-            <h3 className="font-semibold mb-4">Zone de préparation chaude</h3>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label htmlFor="hot-min">Température minimale (°C)</Label>
-                  <Input id="hot-min" type="number" defaultValue="63" className="mt-1" />
-                </div>
-                <div>
-                  <Label htmlFor="hot-max">Température maximale (°C)</Label>
-                  <Input id="hot-max" type="number" defaultValue="100" className="mt-1" />
                 </div>
               </div>
             </div>
