@@ -1,21 +1,20 @@
-import { ArrowLeft, Settings, Bell, Thermometer, Users, Refrigerator, SprayCan, Download, Home } from "lucide-react";
+import { ArrowLeft, Settings, Thermometer, Users, Refrigerator, SprayCan, Download, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Parametres = () => {
   const settingsSections = [
-    { icon: Bell, title: "Notifications", description: "Gérer les alertes et notifications" },
     { icon: Thermometer, title: "Seuils de température", description: "Configurer les limites acceptables" },
     { icon: Users, title: "Personnel", description: "Gérer les utilisateurs et rôles" },
     { icon: Refrigerator, title: "Équipements", description: "Configurer les frigos et équipements" },
     { icon: SprayCan, title: "Plan de nettoyage", description: "Configurer les tâches de nettoyage" },
-    { icon: Download, title: "Export de données", description: "Exporter en CSV, PDF ou JSON" },
     { icon: Users, title: "Fournisseurs", description: "Gérer les fournisseurs" },
+    { icon: Download, title: "Export de données", description: "Exporter en CSV, PDF ou JSON" },
   ];
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-module-pink/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-pink backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">
@@ -30,7 +29,7 @@ const Parametres = () => {
         <div className="space-y-3 animate-fade-in-up">
           {settingsSections.map((section, i) => {
             const Icon = section.icon;
-            const routes = ['/parametres/notifications', '/parametres/temperatures', '/parametres/personnel', '/parametres/equipements', '/parametres/nettoyage', '/parametres/export', '/parametres/fournisseurs'];
+            const routes = ['/parametres/temperatures', '/parametres/personnel', '/parametres/equipements', '/parametres/nettoyage', '/parametres/fournisseurs', '/parametres/export'];
             return (
               <Link
                 key={i}
