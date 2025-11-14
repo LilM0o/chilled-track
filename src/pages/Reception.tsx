@@ -10,8 +10,7 @@ import { cn } from "@/lib/utils";
 const Reception = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState("");
-  const [temperature, setTemperature] = useState("");
-  const [articles, setArticles] = useState("");
+  const [category, setCategory] = useState("");
   const [suppliers, setSuppliers] = useState([
     "Pedrero",
     "Monin",
@@ -21,6 +20,15 @@ const Reception = () => {
   ]);
   const [newSupplier, setNewSupplier] = useState("");
   const [showAddSupplier, setShowAddSupplier] = useState(false);
+
+  const categories = [
+    { name: "Crémerie", color: "bg-yellow-200 hover:bg-yellow-300 border-yellow-400" },
+    { name: "Drivers Frais", color: "bg-blue-200 hover:bg-blue-300 border-blue-400" },
+    { name: "Epicerie", color: "bg-orange-200 hover:bg-orange-300 border-orange-400" },
+    { name: "Fruits et Legumes", color: "bg-green-200 hover:bg-green-300 border-green-400" },
+    { name: "Surgelés", color: "bg-cyan-200 hover:bg-cyan-300 border-cyan-400" },
+    { name: "Viandes", color: "bg-red-200 hover:bg-red-300 border-red-400" },
+  ];
 
   const deliveries = [
     { supplier: "Fruits & Légumes Bio", date: "04/11/2025", temp: "4°C", status: "ok" },
@@ -38,23 +46,22 @@ const Reception = () => {
   };
 
   const handleSubmit = () => {
-    if (supplier && temperature) {
+    if (supplier && category) {
       // Ici, ajouter la logique pour sauvegarder la réception
       setOpen(false);
       setSupplier("");
-      setTemperature("");
-      setArticles("");
+      setCategory("");
       setShowAddSupplier(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-purple/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
-              <Home className="w-5 h-5" />
+            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">
+              <Home className="w-6 h-6" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Réception Marchandises</h1>
@@ -62,12 +69,6 @@ const Reception = () => {
       </header>
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="bg-module-purple text-module-purple-foreground rounded-3xl p-8 mb-6 text-center 
-          animate-scale-in shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <Truck className="w-16 h-16 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Livraisons fournisseurs</h2>
-          <p className="text-sm opacity-75">Contrôlez vos réceptions de marchandises</p>
-        </div>
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -91,10 +92,10 @@ const Reception = () => {
                       type="button"
                       variant="outline"
                       className={cn(
-                        "h-auto py-3 px-4 text-sm font-normal transition-all duration-200",
+                        "h-auto py-3 px-4 text-sm font-normal transition-all duration-200 bg-purple-100 border-purple-300",
                         supplier === sup
-                          ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground"
-                          : "hover:bg-accent"
+                          ? "bg-purple-400 text-white border-purple-500 hover:bg-purple-500 hover:text-white"
+                          : "hover:bg-purple-200"
                       )}
                       onClick={() => setSupplier(sup)}
                     >
@@ -144,30 +145,32 @@ const Reception = () => {
                   </div>
                 )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="articles">Nombre d'articles (optionnel)</Label>
-                <Input
-                  id="articles"
-                  type="number"
-                  placeholder="Ex: 5"
-                  value={articles}
-                  onChange={(e) => setArticles(e.target.value)}
-                />
+              
+              <div className="space-y-3">
+                <Label>Sélectionner une catégorie</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {categories.map((cat) => (
+                    <Button
+                      key={cat.name}
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "h-auto py-3 px-4 text-sm font-normal transition-all duration-200 border-2",
+                        cat.color,
+                        category === cat.name && "ring-2 ring-primary"
+                      )}
+                      onClick={() => setCategory(cat.name)}
+                    >
+                      {cat.name}
+                    </Button>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="temp">Température camion (°C)</Label>
-                <Input
-                  id="temp"
-                  type="number"
-                  placeholder="Ex: 4"
-                  value={temperature}
-                  onChange={(e) => setTemperature(e.target.value)}
-                />
-              </div>
+              
               <Button 
                 onClick={handleSubmit} 
                 className="w-full"
-                disabled={!supplier || !temperature}
+                disabled={!supplier || !category}
               >
                 Enregistrer
               </Button>

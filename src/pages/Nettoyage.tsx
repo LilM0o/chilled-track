@@ -12,6 +12,7 @@ interface Task {
   status: "done" | "pending";
   time?: string;
   person?: string;
+  category: string;
 }
 
 const Nettoyage = () => {
@@ -33,10 +34,10 @@ const Nettoyage = () => {
   ];
 
   const [tasks, setTasks] = useState<Task[]>([
-    { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo" },
-    { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending" },
-    { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending" },
-    { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian" },
+    { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production" },
+    { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
+    { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
+    { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production" },
   ]);
 
   const completedTasks = tasks.filter(t => t.status === "done");
@@ -70,11 +71,11 @@ const Nettoyage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-orange/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
-              <Home className="w-5 h-5" />
+            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">
+              <Home className="w-6 h-6" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Plan de Nettoyage</h1>
@@ -91,12 +92,6 @@ const Nettoyage = () => {
       </header>
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="bg-module-orange text-module-orange-foreground rounded-3xl p-8 mb-6 text-center 
-          animate-scale-in shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <SprayCan className="w-16 h-16 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Tâches et conformité</h2>
-          <p className="text-sm opacity-75">Suivez votre plan de nettoyage</p>
-        </div>
 
         <div className="grid grid-cols-2 gap-4 mb-6 animate-fade-in-up">
           <div className="bg-card rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -129,7 +124,7 @@ const Nettoyage = () => {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-medium">{task.name}</h4>
-                        <p className="text-sm text-muted-foreground">{task.frequency}</p>
+                        <p className="text-sm text-muted-foreground">{task.category} • {task.frequency}</p>
                       </div>
                       <Button 
                         size="sm" 

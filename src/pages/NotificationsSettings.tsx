@@ -44,16 +44,6 @@ const NotificationsSettings = () => {
           <div className="bg-card rounded-2xl p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <Label htmlFor="dlc-alerts" className="text-base font-medium">Alertes DLC</Label>
-                <p className="text-sm text-muted-foreground mt-1">Notifications pour les produits proches de la date limite</p>
-              </div>
-              <Switch id="dlc-alerts" defaultChecked />
-            </div>
-          </div>
-
-          <div className="bg-card rounded-2xl p-5 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
                 <Label htmlFor="cleaning-alerts" className="text-base font-medium">Rappels de nettoyage</Label>
                 <p className="text-sm text-muted-foreground mt-1">Tâches de nettoyage en retard ou à venir</p>
               </div>

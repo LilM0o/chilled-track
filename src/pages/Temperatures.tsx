@@ -42,11 +42,11 @@ const Temperatures = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-green/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
-              <Home className="w-5 h-5" />
+            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">
+              <Home className="w-6 h-6" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Températures Frigos</h1>
@@ -54,12 +54,6 @@ const Temperatures = () => {
       </header>
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="bg-module-green text-module-green-foreground rounded-3xl p-8 mb-6 text-center 
-          animate-scale-in shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <Thermometer className="w-16 h-16 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Relevés quotidiens</h2>
-          <p className="text-sm opacity-75">Contrôlez les températures de vos équipements</p>
-        </div>
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>

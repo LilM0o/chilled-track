@@ -4,18 +4,17 @@ import { Button } from "@/components/ui/button";
 
 const Notifications = () => {
   const notifications = [
-    { title: "Nettoyage en retard", message: "2 tâches de nettoyage non effectuées", time: "Il y a 1h", type: "warning" },
-    { title: "DLC proche", message: "3 produits arrivent à expiration dans 2 jours", time: "Il y a 3h", type: "info" },
-    { title: "Température OK", message: "Tous les relevés sont conformes", time: "Hier", type: "success" },
+            { title: "Nettoyage en retard", message: "2 tâches de nettoyage non effectuées", time: "Il y a 1h", type: "warning" },
+            { title: "Température OK", message: "Tous les relevés sont conformes", time: "Hier", type: "success" },
   ];
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-pink/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
-              <Home className="w-5 h-5" />
+            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">
+              <Home className="w-6 h-6" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Notifications</h1>

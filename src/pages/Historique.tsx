@@ -48,15 +48,6 @@ const Historique = () => {
       person: "Marie Dubois",
       details: "Nettoyage effectué selon le protocole - Produits utilisés: Désinfectant alimentaire"
     },
-    { 
-      type: "Traçabilité", 
-      action: "Produit ajouté", 
-      value: "Poulet fermier - LOT-2025-001", 
-      time: "16:45", 
-      date: "03 janvier 2025",
-      person: "Jean Martin",
-      details: "DLC: 10/01/2025 - Fournisseur: Ferme Bio du Terroir"
-    },
   ];
 
   const getIcon = (type: string) => {

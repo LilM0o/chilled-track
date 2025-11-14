@@ -10,10 +10,17 @@ import { cn } from "@/lib/utils";
 
 const NettoyageSettings = () => {
   const [open, setOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [frequency, setFrequency] = useState("");
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const categories = [
+    { name: "Reserve", color: "bg-blue-200 border-blue-400" },
+    { name: "TGBT", color: "bg-yellow-200 border-yellow-400" },
+    { name: "Magasin", color: "bg-green-200 border-green-400" },
+    { name: "Production", color: "bg-red-200 border-red-400" },
+  ];
 
   const daysOfWeek = [
     { id: "lundi", name: "Lun" },
@@ -25,38 +32,43 @@ const NettoyageSettings = () => {
   ];
 
   const cleaningTasks = [
-    { name: "Nettoyage sols cuisine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"] },
-    { name: "Désinfection surfaces", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"] },
-    { name: "Nettoyage frigos", frequency: "Hebdomadaire", days: ["vendredi"] },
-    { name: "Contrôle bacs graisse", frequency: "Mensuel", days: ["samedi"] },
-    { name: "Nettoyage hotte", frequency: "Hebdomadaire", days: ["mercredi"] },
+    { name: "Nettoyage sols cuisine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
+    { name: "Désinfection surfaces", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
+    { name: "Nettoyage frigos", frequency: "Hebdomadaire", days: ["vendredi"], category: "Reserve" },
+    { name: "Contrôle bacs graisse", frequency: "Mensuel", days: ["samedi"], category: "Production" },
+    { name: "Nettoyage hotte", frequency: "Hebdomadaire", days: ["mercredi"], category: "Production" },
+    { name: "Rangement stocks", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Reserve" },
+    { name: "Nettoyage vitrine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Magasin" },
+    { name: "Contrôle électrique", frequency: "Mensuel", days: ["samedi"], category: "TGBT" },
   ];
 
   const toggleDay = (dayId: string) => {
     setSelectedDays(prev =>
-      prev.includes(dayId)
-        ? prev.filter(d => d !== dayId)
-        : [...prev, dayId]
+      prev.includes(dayId) ? prev.filter(d => d !== dayId) : [...prev, dayId]
     );
   };
 
   const handleAddTask = () => {
-    if (taskName && frequency && selectedDays.length > 0) {
-      // Ici, ajouter la logique pour sauvegarder la tâche
+    if (taskName && frequency && selectedDays.length > 0 && selectedCategory) {
       setOpen(false);
       setTaskName("");
       setFrequency("");
       setSelectedDays([]);
+      setSelectedCategory("");
     }
+  };
+
+  const getCategoryColor = (categoryName: string) => {
+    return categories.find(c => c.name === categoryName)?.color || "bg-gray-200 border-gray-400";
   };
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
+      <header className="bg-module-pink/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon">
-              <Home className="w-5 h-5" />
+            <Button variant="ghost" size="icon" className="w-11 h-11">
+              <Home className="w-6 h-6" />
             </Button>
           </Link>
           <Link to="/parametres">
@@ -78,19 +90,22 @@ const NettoyageSettings = () => {
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="taskName">Nom de la tâche</Label>
-                  <Input
-                    id="taskName"
-                    placeholder="Ex: Nettoyage plan de travail"
-                    value={taskName}
-                    onChange={(e) => setTaskName(e.target.value)}
-                  />
+                  <Input id="taskName" placeholder="Ex: Nettoyage plan de travail" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
+                </div>
+                <div className="space-y-3">
+                  <Label>Catégorie</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {categories.map((cat) => (
+                      <Button key={cat.name} type="button" variant="outline" className={cn("h-auto py-3 px-4 text-sm font-normal transition-all duration-200 border-2", cat.color, selectedCategory === cat.name && "ring-2 ring-primary")} onClick={() => setSelectedCategory(cat.name)}>
+                        {cat.name}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="frequency">Fréquence</Label>
                   <Select value={frequency} onValueChange={setFrequency}>
-                    <SelectTrigger id="frequency">
-                      <SelectValue placeholder="Sélectionner une fréquence" />
-                    </SelectTrigger>
+                    <SelectTrigger id="frequency"><SelectValue placeholder="Sélectionner une fréquence" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Quotidien">Quotidien</SelectItem>
                       <SelectItem value="Hebdomadaire">Hebdomadaire</SelectItem>
@@ -99,99 +114,46 @@ const NettoyageSettings = () => {
                   </Select>
                 </div>
                 <div className="space-y-3">
-                  <Label>Jours de la semaine (fermé dimanche)</Label>
+                  <Label>Jours de la semaine</Label>
                   <div className="grid grid-cols-3 gap-2">
                     {daysOfWeek.map((day) => (
-                      <Button
-                        key={day.id}
-                        type="button"
-                        variant="outline"
-                        className={cn(
-                          "h-auto py-3 px-4 text-sm font-normal transition-all duration-200",
-                          selectedDays.includes(day.id)
-                            ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground"
-                            : "hover:bg-accent"
-                        )}
-                        onClick={() => toggleDay(day.id)}
-                      >
+                      <Button key={day.id} type="button" variant="outline" className={cn("h-auto py-2 px-3 text-sm transition-all duration-200", selectedDays.includes(day.id) ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground" : "hover:bg-accent")} onClick={() => toggleDay(day.id)}>
                         {day.name}
                       </Button>
                     ))}
                   </div>
                 </div>
-                <Button 
-                  onClick={handleAddTask} 
-                  className="w-full"
-                  disabled={!taskName || !frequency || selectedDays.length === 0}
-                >
-                  Ajouter
-                </Button>
+                <Button onClick={handleAddTask} className="w-full" disabled={!taskName || !frequency || selectedDays.length === 0 || !selectedCategory}>Ajouter</Button>
               </div>
             </DialogContent>
           </Dialog>
         </div>
       </header>
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="bg-module-orange text-module-orange-foreground rounded-3xl p-8 mb-6 text-center shadow-lg">
-          <SprayCan className="w-16 h-16 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Gestion du plan</h2>
-          <p className="text-sm opacity-75">Configurez vos tâches de nettoyage</p>
-        </div>
-
-        <div className="space-y-3">
-          <h3 className="text-lg font-semibold mb-4">Tâches configurées</h3>
-          {cleaningTasks.map((task, i) => (
-            <div
-              key={i}
-              className="bg-card rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h4 className="font-medium">{task.name}</h4>
-                  <p className="text-sm text-muted-foreground mt-1">{task.frequency}</p>
-                </div>
-                <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Modifier la tâche</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="editTaskName">Nom de la tâche</Label>
-                        <Input
-                          id="editTaskName"
-                          defaultValue={task.name}
-                        />
+      <div className="max-w-screen-xl mx-auto px-6 space-y-6">
+        {categories.map((category) => {
+          const categoryTasks = cleaningTasks.filter(task => task.category === category.name);
+          return (
+            <div key={category.name} className="space-y-3">
+              <div className={cn("rounded-2xl p-4 border-2", category.color)}>
+                <h2 className="text-xl font-semibold">{category.name}</h2>
+                <p className="text-sm text-muted-foreground">{categoryTasks.length} tâche(s)</p>
+              </div>
+              <div className="space-y-2">
+                {categoryTasks.map((task, i) => (
+                  <div key={i} className={cn("bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-300 border-l-4", category.color.split(' ')[1].replace('border-', 'border-l-'))}>
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-medium">{task.name}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">Fréquence: {task.frequency}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Jours: {task.days.map(d => daysOfWeek.find(day => day.id === d)?.name).join(", ")}</p>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="editFrequency">Fréquence</Label>
-                        <Select defaultValue={task.frequency}>
-                          <SelectTrigger id="editFrequency">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Quotidien">Quotidien</SelectItem>
-                            <SelectItem value="Hebdomadaire">Hebdomadaire</SelectItem>
-                            <SelectItem value="Mensuel">Mensuel</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <Button className="w-full">
-                        Sauvegarder
-                      </Button>
                     </div>
-                  </DialogContent>
-                </Dialog>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );
