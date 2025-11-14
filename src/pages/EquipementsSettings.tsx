@@ -2,7 +2,7 @@ import { ArrowLeft, Refrigerator, Plus, Snowflake, Wind, Home, Trash2 } from "lu
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ const EquipementsSettings = () => {
         icon: eq.type === "Réfrigérateur" ? Refrigerator : Snowflake
       }));
     }
-    return [
+    const defaultEquipments = [
       { name: "Frigo aliments", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
       { name: "Réfrigérateur Bar", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
       { name: "Réfrigérateur Boissons 1", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
@@ -34,7 +34,19 @@ const EquipementsSettings = () => {
       { name: "Congélateur 4", type: "Congélateur", temp: "-20°C", status: "ok", icon: Snowflake },
       { name: "Congélateur Glaces", type: "Congélateur", temp: "-22°C", status: "ok", icon: Snowflake },
     ];
+    // Save default equipments to localStorage
+    localStorage.setItem('equipments', JSON.stringify(defaultEquipments.map(({ icon, ...rest }) => rest)));
+    return defaultEquipments;
   });
+
+  // Ensure equipments are always in localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('equipments');
+    if (!saved && equipments.length > 0) {
+      localStorage.setItem('equipments', JSON.stringify(equipments.map(({ icon, ...rest }) => rest)));
+      window.dispatchEvent(new Event('equipmentsUpdated'));
+    }
+  }, []);
 
   const handleAddEquipment = () => {
     if (newEquipmentName && newEquipmentType && newEquipmentTemp) {

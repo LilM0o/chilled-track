@@ -24,7 +24,7 @@ const Temperatures = () => {
         return [];
       }
     }
-    return [
+    const defaultEquipments = [
       "Frigo aliments",
       "Réfrigérateur Bar",
       "Réfrigérateur Boissons 1",
@@ -36,7 +36,23 @@ const Temperatures = () => {
       "Congélateur 4",
       "Congélateur Glaces",
     ];
+    return defaultEquipments;
   });
+
+  // Initialize default temperature readings if none exist
+  useEffect(() => {
+    const readingsStr = localStorage.getItem('temperatureReadings');
+    if (!readingsStr) {
+      const now = Date.now();
+      const defaultReadings = [
+        { equipmentName: "Frigo aliments", temperature: "3°C", timestamp: now - 600000, date: new Date(now - 600000).toLocaleDateString('fr-FR'), time: new Date(now - 600000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) },
+        { equipmentName: "Réfrigérateur Bar", temperature: "4°C", timestamp: now - 1500000, date: new Date(now - 1500000).toLocaleDateString('fr-FR'), time: new Date(now - 1500000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) },
+        { equipmentName: "Congélateur 1", temperature: "-18°C", timestamp: now - 3600000, date: new Date(now - 3600000).toLocaleDateString('fr-FR'), time: new Date(now - 3600000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) },
+      ];
+      localStorage.setItem('temperatureReadings', JSON.stringify(defaultReadings));
+      window.dispatchEvent(new Event('temperatureUpdated'));
+    }
+  }, []);
 
   // Sync with localStorage changes
   useEffect(() => {
