@@ -48,6 +48,8 @@ const PersonnelSettings = () => {
       const updatedPersonnel = [...personnel, newPerson];
       setPersonnel(updatedPersonnel);
       localStorage.setItem('personnel', JSON.stringify(updatedPersonnel));
+      // Dispatch custom event for same-tab sync
+      window.dispatchEvent(new Event('personnelUpdated'));
       setFormData({ name: "", status: "active" });
       setIsAddDialogOpen(false);
     }
@@ -68,6 +70,8 @@ const PersonnelSettings = () => {
       );
       setPersonnel(updatedPersonnel);
       localStorage.setItem('personnel', JSON.stringify(updatedPersonnel));
+      // Dispatch custom event for same-tab sync
+      window.dispatchEvent(new Event('personnelUpdated'));
       setEditingPerson(null);
       setFormData({ name: "", status: "active" });
       setIsEditDialogOpen(false);
@@ -78,6 +82,8 @@ const PersonnelSettings = () => {
     const updatedPersonnel = personnel.filter(p => p.id !== id);
     setPersonnel(updatedPersonnel);
     localStorage.setItem('personnel', JSON.stringify(updatedPersonnel));
+    // Dispatch custom event for same-tab sync
+    window.dispatchEvent(new Event('personnelUpdated'));
   };
 
   return (

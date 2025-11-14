@@ -2,7 +2,7 @@ import { ArrowLeft, SprayCan, CheckCircle, Clock, Home, History } from "lucide-r
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
@@ -21,17 +21,53 @@ const Nettoyage = () => {
   const [selectedPerson, setSelectedPerson] = useState("");
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
 
-  const personnel = [
-    "Hugo",
-    "Florian",
-    "Lorraine",
-    "Lauria",
-    "Tim Eliot",
-    "Aymene",
-    "Meriem",
-    "Sy'RAI",
-    "Djali",
-  ];
+  // Load personnel dynamically from localStorage
+  const [personnel, setPersonnel] = useState<string[]>(() => {
+    const stored = localStorage.getItem('personnel');
+    if (stored) {
+      try {
+        const parsedPersonnel = JSON.parse(stored);
+        // Filter only active personnel and extract names
+        return parsedPersonnel
+          .filter((p: any) => p.status === 'active')
+          .map((p: any) => p.name);
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  });
+
+  // Sync with localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const stored = localStorage.getItem('personnel');
+      if (stored) {
+        try {
+          const parsedPersonnel = JSON.parse(stored);
+          setPersonnel(
+            parsedPersonnel
+              .filter((p: any) => p.status === 'active')
+              .map((p: any) => p.name)
+          );
+        } catch (e) {
+          setPersonnel([]);
+        }
+      } else {
+        setPersonnel([]);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom event for same-tab updates
+    window.addEventListener('personnelUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('personnelUpdated', handleStorageChange);
+    };
+  }, []);
 
   const [tasks, setTasks] = useState<Task[]>([
     { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production" },
