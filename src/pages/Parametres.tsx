@@ -10,15 +10,16 @@ const Parametres = () => {
     { icon: Refrigerator, title: "Équipements", description: "Configurer les frigos et équipements" },
     { icon: SprayCan, title: "Plan de nettoyage", description: "Configurer les tâches de nettoyage" },
     { icon: Download, title: "Export de données", description: "Exporter en CSV, PDF ou JSON" },
+    { icon: Users, title: "Fournisseurs", description: "Gérer les fournisseurs" },
   ];
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-pink/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300">
-              <Home className="w-5 h-5" />
+            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">
+              <Home className="w-6 h-6" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Paramètres</h1>
@@ -26,17 +27,10 @@ const Parametres = () => {
       </header>
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="bg-module-pink text-module-pink-foreground rounded-3xl p-8 mb-6 text-center 
-          animate-scale-in shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <Settings className="w-16 h-16 mx-auto mb-4 animate-bounce-subtle" />
-          <h2 className="text-xl font-semibold mb-2">Configuration</h2>
-          <p className="text-sm opacity-75">Personnalisez votre application</p>
-        </div>
-
         <div className="space-y-3 animate-fade-in-up">
           {settingsSections.map((section, i) => {
             const Icon = section.icon;
-            const routes = ['/parametres/notifications', '/parametres/temperatures', '/parametres/personnel', '/parametres/equipements', '/parametres/nettoyage', '/parametres/export'];
+            const routes = ['/parametres/notifications', '/parametres/temperatures', '/parametres/personnel', '/parametres/equipements', '/parametres/nettoyage', '/parametres/export', '/parametres/fournisseurs'];
             return (
               <Link
                 key={i}

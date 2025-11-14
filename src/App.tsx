@@ -18,6 +18,7 @@ import PersonnelSettings from "./pages/PersonnelSettings";
 import EquipementsSettings from "./pages/EquipementsSettings";
 import NettoyageSettings from "./pages/NettoyageSettings";
 import ExportSettings from "./pages/ExportSettings";
+import FournisseursSettings from "./pages/FournisseursSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/parametres/equipements" element={<EquipementsSettings />} />
           <Route path="/parametres/nettoyage" element={<NettoyageSettings />} />
           <Route path="/parametres/export" element={<ExportSettings />} />
+          <Route path="/parametres/fournisseurs" element={<FournisseursSettings />} />
           <Route path="/notifications" element={<Notifications />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
