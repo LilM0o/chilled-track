@@ -1,7 +1,6 @@
 import { Package, Thermometer, SprayCan, Truck, BarChart3, Settings } from "lucide-react";
 import ModuleCard from "@/components/ModuleCard";
 import StatusCard from "@/components/StatusCard";
-import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
   const modules = [
@@ -50,7 +49,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-8">
       {/* Header */}
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center justify-center">
@@ -92,8 +91,6 @@ const Index = () => {
           </div>
         </section>
       </div>
-
-      <BottomNav />
     </div>
   );
 };

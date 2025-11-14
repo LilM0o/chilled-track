@@ -1,7 +1,6 @@
-import { ArrowLeft, Filter, Thermometer, SprayCan, Package, Truck, Clock } from "lucide-react";
+import { ArrowLeft, BarChart3, Home, Thermometer, SprayCan, Package, Truck, Clock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import BottomNav from "@/components/BottomNav";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -225,8 +224,6 @@ const Historique = () => {
           )}
         </DialogContent>
       </Dialog>
-
-      <BottomNav />
     </div>
   );
 };

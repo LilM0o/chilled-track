@@ -1,40 +1,64 @@
-import { ArrowLeft, SprayCan, Plus, Edit } from "lucide-react";
+import { ArrowLeft, SprayCan, Plus, Edit, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import BottomNav from "@/components/BottomNav";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const NettoyageSettings = () => {
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [frequency, setFrequency] = useState("");
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
-  const cleaningTasks = [
-    { name: "Nettoyage sols cuisine", frequency: "Quotidien" },
-    { name: "Désinfection surfaces", frequency: "Quotidien" },
-    { name: "Nettoyage frigos", frequency: "Hebdomadaire" },
-    { name: "Contrôle bacs graisse", frequency: "Mensuel" },
-    { name: "Nettoyage hotte", frequency: "Hebdomadaire" },
+  const daysOfWeek = [
+    { id: "lundi", name: "Lun" },
+    { id: "mardi", name: "Mar" },
+    { id: "mercredi", name: "Mer" },
+    { id: "jeudi", name: "Jeu" },
+    { id: "vendredi", name: "Ven" },
+    { id: "samedi", name: "Sam" },
   ];
 
+  const cleaningTasks = [
+    { name: "Nettoyage sols cuisine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"] },
+    { name: "Désinfection surfaces", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"] },
+    { name: "Nettoyage frigos", frequency: "Hebdomadaire", days: ["vendredi"] },
+    { name: "Contrôle bacs graisse", frequency: "Mensuel", days: ["samedi"] },
+    { name: "Nettoyage hotte", frequency: "Hebdomadaire", days: ["mercredi"] },
+  ];
+
+  const toggleDay = (dayId: string) => {
+    setSelectedDays(prev =>
+      prev.includes(dayId)
+        ? prev.filter(d => d !== dayId)
+        : [...prev, dayId]
+    );
+  };
+
   const handleAddTask = () => {
-    if (taskName && frequency) {
+    if (taskName && frequency && selectedDays.length > 0) {
       // Ici, ajouter la logique pour sauvegarder la tâche
       setOpen(false);
       setTaskName("");
       setFrequency("");
+      setSelectedDays([]);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-8">
       <header className="bg-card/95 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
+          <Link to="/">
+            <Button variant="ghost" size="icon">
+              <Home className="w-5 h-5" />
+            </Button>
+          </Link>
           <Link to="/parametres">
             <Button variant="ghost" size="icon">
               <ArrowLeft className="w-5 h-5" />
@@ -74,10 +98,31 @@ const NettoyageSettings = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-3">
+                  <Label>Jours de la semaine (fermé dimanche)</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {daysOfWeek.map((day) => (
+                      <Button
+                        key={day.id}
+                        type="button"
+                        variant="outline"
+                        className={cn(
+                          "h-auto py-3 px-4 text-sm font-normal transition-all duration-200",
+                          selectedDays.includes(day.id)
+                            ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground"
+                            : "hover:bg-accent"
+                        )}
+                        onClick={() => toggleDay(day.id)}
+                      >
+                        {day.name}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
                 <Button 
                   onClick={handleAddTask} 
                   className="w-full"
-                  disabled={!taskName || !frequency}
+                  disabled={!taskName || !frequency || selectedDays.length === 0}
                 >
                   Ajouter
                 </Button>
@@ -148,8 +193,6 @@ const NettoyageSettings = () => {
           ))}
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };
