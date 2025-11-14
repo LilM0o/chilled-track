@@ -14,29 +14,41 @@ const EquipementsSettings = () => {
   const [newEquipmentType, setNewEquipmentType] = useState("");
   const [newEquipmentTemp, setNewEquipmentTemp] = useState("");
   
-  const [equipments, setEquipments] = useState([
-    { name: "Frigo aliments", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
-    { name: "Réfrigérateur Bar", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
-    { name: "Réfrigérateur Boissons 1", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
-    { name: "Réfrigérateur Boissons 2", type: "Réfrigérateur", temp: "5°C", status: "ok", icon: Refrigerator },
-    { name: "Réfrigérateur Bubble Tea", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
-    { name: "Congélateur 1", type: "Congélateur", temp: "-18°C", status: "ok", icon: Snowflake },
-    { name: "Congélateur 2", type: "Congélateur", temp: "-19°C", status: "ok", icon: Snowflake },
-    { name: "Congélateur 3", type: "Congélateur", temp: "-18°C", status: "ok", icon: Snowflake },
-    { name: "Congélateur 4", type: "Congélateur", temp: "-20°C", status: "ok", icon: Snowflake },
-    { name: "Congélateur Glaces", type: "Congélateur", temp: "-22°C", status: "ok", icon: Snowflake },
-  ]);
+  const [equipments, setEquipments] = useState(() => {
+    const saved = localStorage.getItem('equipments');
+    if (saved) {
+      return JSON.parse(saved).map((eq: any) => ({
+        ...eq,
+        icon: eq.type === "Réfrigérateur" ? Refrigerator : Snowflake
+      }));
+    }
+    return [
+      { name: "Frigo aliments", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
+      { name: "Réfrigérateur Bar", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
+      { name: "Réfrigérateur Boissons 1", type: "Réfrigérateur", temp: "4°C", status: "ok", icon: Refrigerator },
+      { name: "Réfrigérateur Boissons 2", type: "Réfrigérateur", temp: "5°C", status: "ok", icon: Refrigerator },
+      { name: "Réfrigérateur Bubble Tea", type: "Réfrigérateur", temp: "3°C", status: "ok", icon: Refrigerator },
+      { name: "Congélateur 1", type: "Congélateur", temp: "-18°C", status: "ok", icon: Snowflake },
+      { name: "Congélateur 2", type: "Congélateur", temp: "-19°C", status: "ok", icon: Snowflake },
+      { name: "Congélateur 3", type: "Congélateur", temp: "-18°C", status: "ok", icon: Snowflake },
+      { name: "Congélateur 4", type: "Congélateur", temp: "-20°C", status: "ok", icon: Snowflake },
+      { name: "Congélateur Glaces", type: "Congélateur", temp: "-22°C", status: "ok", icon: Snowflake },
+    ];
+  });
 
   const handleAddEquipment = () => {
     if (newEquipmentName && newEquipmentType && newEquipmentTemp) {
       const icon = newEquipmentType === "Réfrigérateur" ? Refrigerator : Snowflake;
-      setEquipments([...equipments, {
+      const newEquipment = {
         name: newEquipmentName,
         type: newEquipmentType,
         temp: newEquipmentTemp,
         status: "ok",
         icon
-      }]);
+      };
+      const updatedEquipments = [...equipments, newEquipment];
+      setEquipments(updatedEquipments);
+      localStorage.setItem('equipments', JSON.stringify(updatedEquipments.map(({ icon, ...rest }) => rest)));
       setOpen(false);
       setNewEquipmentName("");
       setNewEquipmentType("");
@@ -45,7 +57,9 @@ const EquipementsSettings = () => {
   };
 
   const handleDeleteEquipment = (index: number) => {
-    setEquipments(equipments.filter((_, i) => i !== index));
+    const updatedEquipments = equipments.filter((_, i) => i !== index);
+    setEquipments(updatedEquipments);
+    localStorage.setItem('equipments', JSON.stringify(updatedEquipments.map(({ icon, ...rest }) => rest)));
   };
 
   return (

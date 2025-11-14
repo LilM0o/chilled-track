@@ -25,9 +25,8 @@ export const exportToJSON = (data: any[], filename: string) => {
   downloadFile(jsonContent, `${filename}.json`, 'application/json');
 };
 
-export const exportToPDF = (data: any[], filename: string) => {
-  // Simple PDF generation using plain text
-  // For a real implementation, consider using jsPDF library
+export const exportToTXT = (data: any[], filename: string) => {
+  // Simple text file export
   const headers = Object.keys(data[0] || {});
   const content = [
     `=== ${filename} ===\n`,

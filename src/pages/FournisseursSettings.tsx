@@ -6,24 +6,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const FournisseursSettings = () => {
-  const [suppliers, setSuppliers] = useState([
-    "Pedrero",
-    "Monin",
-    "Carte D'or",
-    "Metro",
-    "Delidrinks",
-  ]);
+  const [suppliers, setSuppliers] = useState<string[]>(() => {
+    const saved = localStorage.getItem('suppliers');
+    return saved ? JSON.parse(saved) : [
+      "Pedrero",
+      "Monin",
+      "Carte D'or",
+      "Metro",
+      "Delidrinks",
+    ];
+  });
   const [newSupplier, setNewSupplier] = useState("");
 
   const handleAddSupplier = () => {
     if (newSupplier.trim() && !suppliers.includes(newSupplier.trim())) {
-      setSuppliers([...suppliers, newSupplier.trim()]);
+      const updatedSuppliers = [...suppliers, newSupplier.trim()];
+      setSuppliers(updatedSuppliers);
+      localStorage.setItem('suppliers', JSON.stringify(updatedSuppliers));
       setNewSupplier("");
     }
   };
 
   const handleDeleteSupplier = (supplier: string) => {
-    setSuppliers(suppliers.filter(s => s !== supplier));
+    const updatedSuppliers = suppliers.filter(s => s !== supplier);
+    setSuppliers(updatedSuppliers);
+    localStorage.setItem('suppliers', JSON.stringify(updatedSuppliers));
   };
 
   return (

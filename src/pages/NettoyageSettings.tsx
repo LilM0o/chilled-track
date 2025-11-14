@@ -18,10 +18,10 @@ const NettoyageSettings = () => {
   const [editingDays, setEditingDays] = useState<string[]>([]);
 
   const categories = [
-    { name: "Reserve", color: "bg-rose-100 border-rose-300 text-rose-700" },
-    { name: "TGBT", color: "bg-pink-100 border-pink-300 text-pink-700" },
-    { name: "Magasin", color: "bg-fuchsia-100 border-fuchsia-300 text-fuchsia-700" },
-    { name: "Production", color: "bg-purple-100 border-purple-300 text-purple-700" },
+    { name: "Reserve", bgColor: "bg-module-blue", textColor: "text-module-blue-foreground" },
+    { name: "TGBT", bgColor: "bg-module-purple", textColor: "text-module-purple-foreground" },
+    { name: "Magasin", bgColor: "bg-module-orange", textColor: "text-module-orange-foreground" },
+    { name: "Production", bgColor: "bg-module-green", textColor: "text-module-green-foreground" },
   ];
 
   const daysOfWeek = [
@@ -33,16 +33,19 @@ const NettoyageSettings = () => {
     { id: "samedi", name: "Sam" },
   ];
 
-  const [cleaningTasks, setCleaningTasks] = useState([
-    { name: "Nettoyage sols cuisine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
-    { name: "Désinfection surfaces", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
-    { name: "Nettoyage frigos", frequency: "Hebdomadaire", days: ["vendredi"], category: "Reserve" },
-    { name: "Contrôle bacs graisse", frequency: "Mensuel", days: ["samedi"], category: "Production" },
-    { name: "Nettoyage hotte", frequency: "Hebdomadaire", days: ["mercredi"], category: "Production" },
-    { name: "Rangement stocks", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Reserve" },
-    { name: "Nettoyage vitrine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Magasin" },
-    { name: "Contrôle électrique", frequency: "Mensuel", days: ["samedi"], category: "TGBT" },
-  ]);
+  const [cleaningTasks, setCleaningTasks] = useState(() => {
+    const saved = localStorage.getItem('cleaningTasks');
+    return saved ? JSON.parse(saved) : [
+      { name: "Nettoyage sols cuisine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
+      { name: "Désinfection surfaces", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
+      { name: "Nettoyage frigos", frequency: "Hebdomadaire", days: ["vendredi"], category: "Reserve" },
+      { name: "Contrôle bacs graisse", frequency: "Mensuel", days: ["samedi"], category: "Production" },
+      { name: "Nettoyage hotte", frequency: "Hebdomadaire", days: ["mercredi"], category: "Production" },
+      { name: "Rangement stocks", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Reserve" },
+      { name: "Nettoyage vitrine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Magasin" },
+      { name: "Contrôle électrique", frequency: "Mensuel", days: ["samedi"], category: "TGBT" },
+    ];
+  });
 
   const toggleDay = (dayId: string) => {
     setSelectedDays(prev =>
@@ -64,7 +67,9 @@ const NettoyageSettings = () => {
         days: selectedDays,
         category: selectedCategory
       };
-      setCleaningTasks([...cleaningTasks, newTask]);
+      const updatedTasks = [...cleaningTasks, newTask];
+      setCleaningTasks(updatedTasks);
+      localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
       setOpen(false);
       setTaskName("");
       setSelectedDays([]);
@@ -87,14 +92,16 @@ const NettoyageSettings = () => {
         frequency: editingDays.length === 6 ? "Quotidien" : editingDays.length === 1 ? "Hebdomadaire" : "Personnalisé"
       };
       setCleaningTasks(updatedTasks);
+      localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
       setEditOpen(false);
       setEditingTaskIndex(null);
       setEditingDays([]);
     }
   };
 
-  const getCategoryColor = (categoryName: string) => {
-    return categories.find(c => c.name === categoryName)?.color || "bg-gray-200 border-gray-400 text-gray-700";
+  const getCategoryColors = (categoryName: string) => {
+    const category = categories.find(c => c.name === categoryName);
+    return category ? { bgColor: category.bgColor, textColor: category.textColor } : { bgColor: "bg-secondary", textColor: "text-foreground" };
   };
 
   const groupedTasks = categories.map(cat => ({
@@ -149,7 +156,7 @@ const NettoyageSettings = () => {
                         className={cn(
                           "h-auto py-3 px-4 text-sm font-normal transition-all duration-200",
                           selectedCategory === cat.name
-                            ? `${cat.color} border-2`
+                            ? `${cat.bgColor} ${cat.textColor} border-2`
                             : "hover:bg-accent"
                         )}
                         onClick={() => setSelectedCategory(cat.name)}
@@ -206,7 +213,8 @@ const NettoyageSettings = () => {
               >
                 <AccordionTrigger className={cn(
                   "rounded-xl p-4 border-2 hover:no-underline transition-all duration-200",
-                  group.color,
+                  group.bgColor,
+                  group.textColor,
                   "[&[data-state=open]]:rounded-b-none"
                 )}>
                   <div className="flex items-center gap-3 text-left">
@@ -220,7 +228,7 @@ const NettoyageSettings = () => {
                 
                 <AccordionContent className={cn(
                   "border-2 border-t-0 rounded-b-xl p-4 space-y-2",
-                  group.color.replace('bg-', 'border-')
+                  group.bgColor.replace('bg-', 'border-')
                 )}>
                   {group.tasks.map((task, idx) => {
                     const taskIndex = cleaningTasks.findIndex(t => t === task);
