@@ -5,16 +5,16 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/utils/exportData";
+import { exportToCSV, exportToJSON, exportToTXT } from "@/utils/exportData";
 import { toast } from "sonner";
 
 const ExportSettings = () => {
-  const [selectedFormat, setSelectedFormat] = useState<"csv" | "pdf" | "json" | null>(null);
+  const [selectedFormat, setSelectedFormat] = useState<"csv" | "txt" | "json" | null>(null);
   const [selectedData, setSelectedData] = useState<string[]>([]);
 
   const exportFormats = [
     { id: "csv", name: "CSV", icon: FileSpreadsheet, description: "Format tableur" },
-    { id: "pdf", name: "PDF", icon: FileText, description: "Document imprimable" },
+    { id: "txt", name: "TXT", icon: FileText, description: "Document texte" },
     { id: "json", name: "JSON", icon: FileJson, description: "Format données" },
   ];
 
@@ -70,8 +70,8 @@ const ExportSettings = () => {
           case 'json':
             exportToJSON(combinedData, filename);
             break;
-          case 'pdf':
-            exportToPDF(combinedData, filename);
+          case 'txt':
+            exportToTXT(combinedData, filename);
             break;
         }
         toast.success("Export réussi !");

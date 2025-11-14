@@ -11,29 +11,30 @@ import { useState } from "react";
 interface Person {
   id: string;
   name: string;
-  role: string;
   status: "active" | "inactive";
 }
 
 const PersonnelSettings = () => {
-  const [personnel, setPersonnel] = useState<Person[]>([
-    { id: "1", name: "Hugo", role: "Équipier", status: "active" },
-    { id: "2", name: "Florian", role: "Équipier", status: "active" },
-    { id: "3", name: "Lorraine", role: "Équipier", status: "active" },
-    { id: "4", name: "Lauria", role: "Équipier", status: "active" },
-    { id: "5", name: "Tim Eliot", role: "Équipier", status: "active" },
-    { id: "6", name: "Aymene", role: "Équipier", status: "active" },
-    { id: "7", name: "Meriem", role: "Équipier", status: "active" },
-    { id: "8", name: "Sy'RAI", role: "Équipier", status: "active" },
-    { id: "9", name: "Djali", role: "Équipier", status: "active" },
-  ]);
+  const [personnel, setPersonnel] = useState<Person[]>(() => {
+    const saved = localStorage.getItem('personnel');
+    return saved ? JSON.parse(saved) : [
+      { id: "1", name: "Hugo", status: "active" },
+      { id: "2", name: "Florian", status: "active" },
+      { id: "3", name: "Lorraine", status: "active" },
+      { id: "4", name: "Lauria", status: "active" },
+      { id: "5", name: "Tim Eliot", status: "active" },
+      { id: "6", name: "Aymene", status: "active" },
+      { id: "7", name: "Meriem", status: "active" },
+      { id: "8", name: "Sy'RAI", status: "active" },
+      { id: "9", name: "Djali", status: "active" },
+    ];
+  });
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<Person | null>(null);
-  const [formData, setFormData] = useState<{ name: string; role: string; status: "active" | "inactive" }>({ 
+  const [formData, setFormData] = useState<{ name: string; status: "active" | "inactive" }>({ 
     name: "", 
-    role: "Équipier", 
     status: "active" 
   });
 
@@ -42,36 +43,41 @@ const PersonnelSettings = () => {
       const newPerson: Person = {
         id: Date.now().toString(),
         name: formData.name,
-        role: formData.role,
         status: formData.status,
       };
-      setPersonnel([...personnel, newPerson]);
-      setFormData({ name: "", role: "Équipier", status: "active" });
+      const updatedPersonnel = [...personnel, newPerson];
+      setPersonnel(updatedPersonnel);
+      localStorage.setItem('personnel', JSON.stringify(updatedPersonnel));
+      setFormData({ name: "", status: "active" });
       setIsAddDialogOpen(false);
     }
   };
 
   const handleEdit = (person: Person) => {
     setEditingPerson(person);
-    setFormData({ name: person.name, role: person.role, status: person.status });
+    setFormData({ name: person.name, status: person.status });
     setIsEditDialogOpen(true);
   };
 
   const handleUpdate = () => {
     if (editingPerson && formData.name.trim()) {
-      setPersonnel(personnel.map(p => 
+      const updatedPersonnel = personnel.map(p => 
         p.id === editingPerson.id 
-          ? { ...p, name: formData.name, role: formData.role, status: formData.status }
+          ? { ...p, name: formData.name, status: formData.status }
           : p
-      ));
+      );
+      setPersonnel(updatedPersonnel);
+      localStorage.setItem('personnel', JSON.stringify(updatedPersonnel));
       setEditingPerson(null);
-      setFormData({ name: "", role: "Équipier", status: "active" });
+      setFormData({ name: "", status: "active" });
       setIsEditDialogOpen(false);
     }
   };
 
   const handleDelete = (id: string) => {
-    setPersonnel(personnel.filter(p => p.id !== id));
+    const updatedPersonnel = personnel.filter(p => p.id !== id);
+    setPersonnel(updatedPersonnel);
+    localStorage.setItem('personnel', JSON.stringify(updatedPersonnel));
   };
 
   return (
@@ -117,7 +123,6 @@ const PersonnelSettings = () => {
                       {person.status === "active" ? "Actif" : "Inactif"}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{person.role}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -158,19 +163,6 @@ const PersonnelSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label>Rôle</Label>
-              <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Équipier">Équipier</SelectItem>
-                  <SelectItem value="Manager">Manager</SelectItem>
-                  <SelectItem value="Chef">Chef</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
               <Label>Statut</Label>
               <Select value={formData.status} onValueChange={(value: "active" | "inactive") => setFormData({ ...formData, status: value })}>
                 <SelectTrigger>
@@ -202,19 +194,6 @@ const PersonnelSettings = () => {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
-            </div>
-            <div className="space-y-2">
-              <Label>Rôle</Label>
-              <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Équipier">Équipier</SelectItem>
-                  <SelectItem value="Manager">Manager</SelectItem>
-                  <SelectItem value="Chef">Chef</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <div className="space-y-2">
               <Label>Statut</Label>

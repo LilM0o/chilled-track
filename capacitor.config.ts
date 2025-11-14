@@ -11,6 +11,14 @@ const config: CapacitorConfig = {
   plugins: {
     BarcodeScannerPlugin: {
       cameraAccess: true
+    },
+    Camera: {
+      android: {
+        requestPermissions: true
+      },
+      ios: {
+        requestPermissions: true
+      }
     }
   }
 };
