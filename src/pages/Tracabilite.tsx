@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +29,7 @@ const Tracabilite = () => {
   };
 
   const handleSubmit = () => {
-    if (selectedSupplier) {
+    if (selectedSupplier && barcode) {
       // Save the product data
       setOpen(false);
       setScannedImage("");
@@ -39,7 +40,7 @@ const Tracabilite = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-module-blue/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-blue backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">
@@ -86,12 +87,18 @@ const Tracabilite = () => {
                 </div>
               )}
               
-              {barcode && (
-                <div className="space-y-2">
-                  <Label>Code-barres détecté</Label>
+              <div className="space-y-2">
+                <Label>Code-barres</Label>
+                {barcode ? (
                   <div className="p-3 bg-secondary rounded-lg font-mono text-sm">{barcode}</div>
-                </div>
-              )}
+                ) : (
+                  <Input
+                    placeholder="Saisir le code-barres"
+                    value={barcode}
+                    onChange={(e) => setBarcode(e.target.value)}
+                  />
+                )}
+              </div>
               
               <div className="space-y-2">
                 <Label>Date et heure</Label>
@@ -125,7 +132,7 @@ const Tracabilite = () => {
               <Button 
                 onClick={handleSubmit} 
                 className="w-full"
-                disabled={!selectedSupplier}
+                disabled={!selectedSupplier || !barcode}
               >
                 Enregistrer
               </Button>

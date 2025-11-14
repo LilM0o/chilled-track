@@ -57,7 +57,7 @@ const Reception = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-module-purple/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-purple backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">

@@ -71,7 +71,7 @@ const Nettoyage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="bg-module-orange/30 backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
+      <header className="bg-module-orange backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
         <div className="max-w-screen-xl mx-auto flex items-center gap-4">
           <Link to="/">
             <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform duration-300 w-11 h-11">
@@ -164,7 +164,7 @@ const Nettoyage = () => {
                     </div>
                     <div className="flex-1">
                       <h4 className="font-medium">{task.name}</h4>
-                      <p className="text-sm text-muted-foreground">{task.frequency}</p>
+                  <p className="text-sm text-muted-foreground">{task.category} • {task.frequency}</p>
                       {task.time && (
                         <p className="text-xs text-muted-foreground mt-1">
                           Fait à {task.time} par {task.person}
