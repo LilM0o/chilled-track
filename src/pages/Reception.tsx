@@ -2,7 +2,7 @@ import { ArrowLeft, Truck, Plus, Home, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -26,15 +26,39 @@ const Reception = () => {
     { id: "2", supplier: "Boucherie Centrale", date: "03/11/2025", temp: "2°C", status: "ok", category: "Viandes" },
     { id: "3", supplier: "Produits Laitiers", date: "02/11/2025", temp: "5°C", status: "ok", category: "Crémerie" },
   ]);
-  const [suppliers, setSuppliers] = useState([
-    "Pedrero",
-    "Monin",
-    "Carte D'or",
-    "Metro",
-    "Delidrinks",
-  ]);
+  
+  // Load suppliers dynamically from localStorage
+  const [suppliers, setSuppliers] = useState<string[]>(() => {
+    const saved = localStorage.getItem('suppliers');
+    return saved ? JSON.parse(saved) : [
+      "Pedrero",
+      "Monin",
+      "Carte D'or",
+      "Metro",
+      "Delidrinks",
+    ];
+  });
+  
   const [newSupplier, setNewSupplier] = useState("");
   const [showAddSupplier, setShowAddSupplier] = useState(false);
+
+  // Sync with localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('suppliers');
+      if (saved) {
+        setSuppliers(JSON.parse(saved));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('suppliersUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('suppliersUpdated', handleStorageChange);
+    };
+  }, []);
 
   const categories = [
     { name: "Crémerie", color: "bg-yellow-200 hover:bg-yellow-300 border-yellow-400" },
@@ -49,7 +73,10 @@ const Reception = () => {
 
   const handleAddSupplier = () => {
     if (newSupplier.trim()) {
-      setSuppliers([...suppliers, newSupplier.trim()]);
+      const updatedSuppliers = [...suppliers, newSupplier.trim()];
+      setSuppliers(updatedSuppliers);
+      localStorage.setItem('suppliers', JSON.stringify(updatedSuppliers));
+      window.dispatchEvent(new Event('suppliersUpdated'));
       setSupplier(newSupplier.trim());
       setNewSupplier("");
       setShowAddSupplier(false);

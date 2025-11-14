@@ -23,6 +23,7 @@ const FournisseursSettings = () => {
       const updatedSuppliers = [...suppliers, newSupplier.trim()];
       setSuppliers(updatedSuppliers);
       localStorage.setItem('suppliers', JSON.stringify(updatedSuppliers));
+      window.dispatchEvent(new Event('suppliersUpdated'));
       setNewSupplier("");
     }
   };
@@ -31,6 +32,7 @@ const FournisseursSettings = () => {
     const updatedSuppliers = suppliers.filter(s => s !== supplier);
     setSuppliers(updatedSuppliers);
     localStorage.setItem('suppliers', JSON.stringify(updatedSuppliers));
+    window.dispatchEvent(new Event('suppliersUpdated'));
   };
 
   return (

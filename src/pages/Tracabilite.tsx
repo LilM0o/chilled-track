@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface TracabiliteEntry {
@@ -23,13 +23,35 @@ const Tracabilite = () => {
   const [selectedSupplier, setSelectedSupplier] = useState("");
   const [entries, setEntries] = useState<TracabiliteEntry[]>([]);
   
-  const suppliers = [
-    "Pedrero",
-    "Monin",
-    "Carte D'or",
-    "Metro",
-    "Delidrinks",
-  ];
+  // Load suppliers dynamically from localStorage
+  const [suppliers, setSuppliers] = useState<string[]>(() => {
+    const saved = localStorage.getItem('suppliers');
+    return saved ? JSON.parse(saved) : [
+      "Pedrero",
+      "Monin",
+      "Carte D'or",
+      "Metro",
+      "Delidrinks",
+    ];
+  });
+
+  // Sync with localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('suppliers');
+      if (saved) {
+        setSuppliers(JSON.parse(saved));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('suppliersUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('suppliersUpdated', handleStorageChange);
+    };
+  }, []);
 
   const handleScanBarcode = async () => {
     try {

@@ -49,6 +49,7 @@ const EquipementsSettings = () => {
       const updatedEquipments = [...equipments, newEquipment];
       setEquipments(updatedEquipments);
       localStorage.setItem('equipments', JSON.stringify(updatedEquipments.map(({ icon, ...rest }) => rest)));
+      window.dispatchEvent(new Event('equipmentsUpdated'));
       setOpen(false);
       setNewEquipmentName("");
       setNewEquipmentType("");
@@ -60,6 +61,7 @@ const EquipementsSettings = () => {
     const updatedEquipments = equipments.filter((_, i) => i !== index);
     setEquipments(updatedEquipments);
     localStorage.setItem('equipments', JSON.stringify(updatedEquipments.map(({ icon, ...rest }) => rest)));
+    window.dispatchEvent(new Event('equipmentsUpdated'));
   };
 
   return (

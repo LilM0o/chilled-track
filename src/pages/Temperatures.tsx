@@ -2,7 +2,7 @@ import { ArrowLeft, Thermometer, Plus, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -12,18 +12,54 @@ const Temperatures = () => {
   const [selectedEquipment, setSelectedEquipment] = useState("");
   const [temperature, setTemperature] = useState("");
 
-  const equipments = [
-    "Frigo aliments",
-    "Réfrigérateur Bar",
-    "Réfrigérateur Boissons 1",
-    "Réfrigérateur Boissons 2",
-    "Réfrigérateur Bubble Tea",
-    "Congélateur 1",
-    "Congélateur 2",
-    "Congélateur 3",
-    "Congélateur 4",
-    "Congélateur Glaces",
-  ];
+  // Load equipments dynamically from localStorage
+  const [equipments, setEquipments] = useState<string[]>(() => {
+    const saved = localStorage.getItem('equipments');
+    if (saved) {
+      try {
+        const parsedEquipments = JSON.parse(saved);
+        // Extract only the names
+        return parsedEquipments.map((eq: any) => eq.name);
+      } catch (e) {
+        return [];
+      }
+    }
+    return [
+      "Frigo aliments",
+      "Réfrigérateur Bar",
+      "Réfrigérateur Boissons 1",
+      "Réfrigérateur Boissons 2",
+      "Réfrigérateur Bubble Tea",
+      "Congélateur 1",
+      "Congélateur 2",
+      "Congélateur 3",
+      "Congélateur 4",
+      "Congélateur Glaces",
+    ];
+  });
+
+  // Sync with localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('equipments');
+      if (saved) {
+        try {
+          const parsedEquipments = JSON.parse(saved);
+          setEquipments(parsedEquipments.map((eq: any) => eq.name));
+        } catch (e) {
+          setEquipments([]);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('equipmentsUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('equipmentsUpdated', handleStorageChange);
+    };
+  }, []);
 
   const fridges = [
     { name: "Frigo aliments", temp: "3°C", status: "ok", time: "Il y a 10 min" },
