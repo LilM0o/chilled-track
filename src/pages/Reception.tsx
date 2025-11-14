@@ -7,10 +7,25 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
+interface Reception {
+  id: string;
+  supplier: string;
+  category: string;
+  date: string;
+  temp: string;
+  status: string;
+}
+
 const Reception = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState("");
   const [category, setCategory] = useState("");
+  const [temperature, setTemperature] = useState("");
+  const [receptions, setReceptions] = useState<Reception[]>([
+    { id: "1", supplier: "Fruits & Légumes Bio", date: "04/11/2025", temp: "4°C", status: "ok", category: "Fruits et Legumes" },
+    { id: "2", supplier: "Boucherie Centrale", date: "03/11/2025", temp: "2°C", status: "ok", category: "Viandes" },
+    { id: "3", supplier: "Produits Laitiers", date: "02/11/2025", temp: "5°C", status: "ok", category: "Crémerie" },
+  ]);
   const [suppliers, setSuppliers] = useState([
     "Pedrero",
     "Monin",
@@ -30,11 +45,7 @@ const Reception = () => {
     { name: "Viandes", color: "bg-red-200 hover:bg-red-300 border-red-400" },
   ];
 
-  const deliveries = [
-    { supplier: "Fruits & Légumes Bio", date: "04/11/2025", temp: "4°C", status: "ok" },
-    { supplier: "Boucherie Centrale", date: "03/11/2025", temp: "2°C", status: "ok" },
-    { supplier: "Produits Laitiers", date: "02/11/2025", temp: "5°C", status: "ok" },
-  ];
+  const deliveries = receptions;
 
   const handleAddSupplier = () => {
     if (newSupplier.trim()) {
@@ -47,10 +58,20 @@ const Reception = () => {
 
   const handleSubmit = () => {
     if (supplier && category) {
-      // Ici, ajouter la logique pour sauvegarder la réception
+      const newReception: Reception = {
+        id: Date.now().toString(),
+        supplier,
+        category,
+        date: new Date().toLocaleDateString('fr-FR'),
+        temp: temperature || "N/A",
+        status: "ok",
+      };
+      
+      setReceptions([newReception, ...receptions]);
       setOpen(false);
       setSupplier("");
       setCategory("");
+      setTemperature("");
       setShowAddSupplier(false);
     }
   };
@@ -167,7 +188,17 @@ const Reception = () => {
                 </div>
               </div>
               
-              <Button 
+              <div className="space-y-3">
+                <Label>Température camion (optionnel)</Label>
+                <Input
+                  type="text"
+                  placeholder="Ex: 4°C"
+                  value={temperature}
+                  onChange={(e) => setTemperature(e.target.value)}
+                />
+              </div>
+              
+              <Button
                 onClick={handleSubmit} 
                 className="w-full"
                 disabled={!supplier || !category}

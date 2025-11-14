@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { exportToCSV, exportToJSON, exportToPDF } from "@/utils/exportData";
+import { toast } from "sonner";
 
 const ExportSettings = () => {
   const [selectedFormat, setSelectedFormat] = useState<"csv" | "pdf" | "json" | null>(null);
@@ -26,8 +28,57 @@ const ExportSettings = () => {
 
   const handleExport = () => {
     if (selectedFormat && selectedData.length > 0) {
-      // Logique d'export ici
-      console.log(`Exporting ${selectedData.join(", ")} as ${selectedFormat}`);
+      // Simulation de données pour l'export
+      const mockData: Record<string, any[]> = {
+        temperatures: [
+          { date: "14/11/2024 10:00", equipment: "Frigo vitrine", temperature: "4°C", status: "Conforme" },
+          { date: "14/11/2024 14:00", equipment: "Chambre froide", temperature: "2°C", status: "Conforme" },
+        ],
+        nettoyage: [
+          { date: "14/11/2024", tache: "Nettoyage sols", categorie: "Sols et surfaces", statut: "Terminé" },
+          { date: "14/11/2024", tache: "Désinfection équipements", categorie: "Équipements", statut: "Terminé" },
+        ],
+        tracabilite: [
+          { date: "14/11/2024 09:30", fournisseur: "Pedrero", codeBarres: "3760050000000", numeroLot: "LOT123456" },
+          { date: "14/11/2024 11:00", fournisseur: "Monin", codeBarres: "3052910000000", numeroLot: "LOT789012" },
+        ],
+        reception: [
+          { date: "14/11/2024", fournisseur: "Metro", categorie: "Produits frais", temperature: "4°C", conformite: "Conforme" },
+          { date: "13/11/2024", fournisseur: "Carte D'or", categorie: "Surgelés", temperature: "-18°C", conformite: "Conforme" },
+        ],
+        historique: [
+          { module: "Températures", action: "Relevé température", date: "14/11/2024 10:00", utilisateur: "Hugo" },
+          { module: "Nettoyage", action: "Tâche terminée", date: "14/11/2024 09:00", utilisateur: "Florian" },
+        ],
+      };
+
+      // Combine toutes les données sélectionnées
+      const combinedData = selectedData.flatMap(dataType => mockData[dataType] || []);
+      
+      if (combinedData.length === 0) {
+        toast.error("Aucune donnée à exporter");
+        return;
+      }
+
+      const filename = `export_${selectedData.join('_')}_${new Date().toISOString().split('T')[0]}`;
+
+      try {
+        switch (selectedFormat) {
+          case 'csv':
+            exportToCSV(combinedData, filename);
+            break;
+          case 'json':
+            exportToJSON(combinedData, filename);
+            break;
+          case 'pdf':
+            exportToPDF(combinedData, filename);
+            break;
+        }
+        toast.success("Export réussi !");
+      } catch (error) {
+        toast.error("Erreur lors de l'export");
+        console.error(error);
+      }
     }
   };
 

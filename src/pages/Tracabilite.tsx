@@ -7,11 +7,21 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
+interface TracabiliteEntry {
+  id: string;
+  date: string;
+  barcode: string;
+  lotNumber: string;
+  supplier: string;
+}
+
 const Tracabilite = () => {
   const [open, setOpen] = useState(false);
   const [scannedImage, setScannedImage] = useState<string>("");
   const [barcode, setBarcode] = useState<string>("");
+  const [lotNumber, setLotNumber] = useState<string>("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [entries, setEntries] = useState<TracabiliteEntry[]>([]);
   
   const suppliers = [
     "Pedrero",
@@ -22,18 +32,47 @@ const Tracabilite = () => {
   ];
 
   const handleScanBarcode = async () => {
-    // Pour l'instant, ouvrir le formulaire directement
-    // La fonctionnalité de scan nécessite une tablette Android avec Capacitor configuré
-    console.log('Scan de code-barres - Nécessite Capacitor sur Android');
-    setOpen(true);
+    try {
+      // Utilise Capacitor Camera pour prendre une photo
+      const { Camera, CameraResultType } = await import('@capacitor/camera');
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+      });
+      
+      if (image.webPath) {
+        setScannedImage(image.webPath);
+        
+        // Simule l'extraction (à remplacer par une vraie API OCR/Barcode)
+        // Pour une vraie implémentation, utiliser @capacitor-mlkit/barcode-scanning
+        setBarcode("3760050000000"); // Exemple
+        setLotNumber("LOT123456"); // Exemple
+      }
+      
+      setOpen(true);
+    } catch (error) {
+      console.error('Erreur lors du scan:', error);
+      // Fallback: ouvrir le formulaire sans photo
+      setOpen(true);
+    }
   };
 
   const handleSubmit = () => {
-    if (selectedSupplier && barcode) {
-      // Save the product data
+    if (selectedSupplier && barcode && lotNumber) {
+      const newEntry: TracabiliteEntry = {
+        id: Date.now().toString(),
+        date: new Date().toLocaleString('fr-FR'),
+        barcode,
+        lotNumber,
+        supplier: selectedSupplier,
+      };
+      
+      setEntries([newEntry, ...entries]);
       setOpen(false);
       setScannedImage("");
       setBarcode("");
+      setLotNumber("");
       setSelectedSupplier("");
     }
   };
@@ -89,15 +128,20 @@ const Tracabilite = () => {
               
               <div className="space-y-2">
                 <Label>Code-barres</Label>
-                {barcode ? (
-                  <div className="p-3 bg-secondary rounded-lg font-mono text-sm">{barcode}</div>
-                ) : (
-                  <Input
-                    placeholder="Saisir le code-barres"
-                    value={barcode}
-                    onChange={(e) => setBarcode(e.target.value)}
-                  />
-                )}
+                <Input
+                  placeholder="Saisir le code-barres"
+                  value={barcode}
+                  onChange={(e) => setBarcode(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Numéro de lot</Label>
+                <Input
+                  placeholder="Saisir le numéro de lot"
+                  value={lotNumber}
+                  onChange={(e) => setLotNumber(e.target.value)}
+                />
               </div>
               
               <div className="space-y-2">
