@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { addToHistory } from "@/utils/historyUtils";
+import { storage } from "@/utils/storage";
 
 interface Reception {
   id: string;
@@ -20,24 +21,27 @@ const Reception = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState("");
   const [category, setCategory] = useState("");
-  const [receptions, setReceptions] = useState<Reception[]>(() => {
-    const saved = localStorage.getItem('receptions');
-    return saved ? JSON.parse(saved) : [];
-  });
-  
-  // Load suppliers dynamically from localStorage
-  const [suppliers, setSuppliers] = useState<string[]>(() => {
-    const saved = localStorage.getItem('suppliers');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [receptions, setReceptions] = useState<Reception[]>([]);
+  const [suppliers, setSuppliers] = useState<string[]>([]);
+
+  // Load data on mount
+  useEffect(() => {
+    const loadData = async () => {
+      const savedReceptions = await storage.getItem('receptions');
+      const savedSuppliers = await storage.getItem('suppliers');
+      setReceptions(savedReceptions ? JSON.parse(savedReceptions) : []);
+      setSuppliers(savedSuppliers ? JSON.parse(savedSuppliers) : []);
+    };
+    loadData();
+  }, []);
   
   const [newSupplier, setNewSupplier] = useState("");
   const [showAddSupplier, setShowAddSupplier] = useState(false);
 
-  // Sync with localStorage changes
+  // Sync with storage changes
   useEffect(() => {
-    const handleStorageChange = () => {
-      const saved = localStorage.getItem('suppliers');
+    const handleStorageChange = async () => {
+      const saved = await storage.getItem('suppliers');
       if (saved) {
         setSuppliers(JSON.parse(saved));
       }
@@ -63,11 +67,11 @@ const Reception = () => {
 
   const deliveries = receptions;
 
-  const handleAddSupplier = () => {
+  const handleAddSupplier = async () => {
     if (newSupplier.trim()) {
       const updatedSuppliers = [...suppliers, newSupplier.trim()];
       setSuppliers(updatedSuppliers);
-      localStorage.setItem('suppliers', JSON.stringify(updatedSuppliers));
+      await storage.setItem('suppliers', JSON.stringify(updatedSuppliers));
       window.dispatchEvent(new Event('suppliersUpdated'));
       setSupplier(newSupplier.trim());
       setNewSupplier("");
@@ -75,7 +79,7 @@ const Reception = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (supplier && category) {
       const now = new Date();
       const newReception: Reception = {
@@ -89,11 +93,11 @@ const Reception = () => {
       const updatedReceptions = [newReception, ...receptions];
       setReceptions(updatedReceptions);
       
-      // Sauvegarder dans localStorage
-      localStorage.setItem('receptions', JSON.stringify(updatedReceptions));
+      // Sauvegarder dans storage
+      await storage.setItem('receptions', JSON.stringify(updatedReceptions));
       
       // Ajouter à l'historique
-      addToHistory({
+      await addToHistory({
         type: "Réception",
         action: "Nouvelle réception",
         value: `${supplier} - ${category}`,

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { addToHistory } from "@/utils/historyUtils";
+import { storage } from "@/utils/storage";
 
 interface TracabiliteEntry {
   id: string;
@@ -22,21 +23,24 @@ const Tracabilite = () => {
   const [barcode, setBarcode] = useState<string>("");
   const [lotNumber, setLotNumber] = useState<string>("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [entries, setEntries] = useState<TracabiliteEntry[]>(() => {
-    const saved = localStorage.getItem('tracabiliteEntries');
-    return saved ? JSON.parse(saved) : [];
-  });
-  
-  // Load suppliers dynamically from localStorage
-  const [suppliers, setSuppliers] = useState<string[]>(() => {
-    const saved = localStorage.getItem('suppliers');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [entries, setEntries] = useState<TracabiliteEntry[]>([]);
+  const [suppliers, setSuppliers] = useState<string[]>([]);
 
-  // Sync with localStorage changes
+  // Load data on mount
   useEffect(() => {
-    const handleStorageChange = () => {
-      const saved = localStorage.getItem('suppliers');
+    const loadData = async () => {
+      const savedEntries = await storage.getItem('tracabiliteEntries');
+      const savedSuppliers = await storage.getItem('suppliers');
+      setEntries(savedEntries ? JSON.parse(savedEntries) : []);
+      setSuppliers(savedSuppliers ? JSON.parse(savedSuppliers) : []);
+    };
+    loadData();
+  }, []);
+
+  // Sync with storage changes
+  useEffect(() => {
+    const handleStorageChange = async () => {
+      const saved = await storage.getItem('suppliers');
       if (saved) {
         setSuppliers(JSON.parse(saved));
       }
@@ -78,7 +82,7 @@ const Tracabilite = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (selectedSupplier && barcode && lotNumber) {
       const now = new Date();
       const newEntry: TracabiliteEntry = {
@@ -91,10 +95,10 @@ const Tracabilite = () => {
       
       const updatedEntries = [newEntry, ...entries];
       setEntries(updatedEntries);
-      localStorage.setItem('tracabiliteEntries', JSON.stringify(updatedEntries));
+      await storage.setItem('tracabiliteEntries', JSON.stringify(updatedEntries));
       
       // Ajouter à l'historique
-      addToHistory({
+      await addToHistory({
         type: "Traçabilité",
         action: "Nouveau produit enregistré",
         value: `${selectedSupplier} - ${barcode}`,
