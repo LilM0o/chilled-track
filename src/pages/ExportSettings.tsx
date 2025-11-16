@@ -7,6 +7,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { exportToCSV, exportToXLSX, exportToPDF } from "@/utils/exportData";
 import { toast } from "sonner";
+import { storage } from "@/utils/storage";
 
 const ExportSettings = () => {
   const [selectedFormat, setSelectedFormat] = useState<"csv" | "xlsx" | "pdf" | null>(null);
@@ -26,34 +27,67 @@ const ExportSettings = () => {
     { id: "historique", name: "Historique complet" },
   ];
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (selectedFormat && selectedData.length > 0) {
-      // Simulation de données pour l'export
-      const mockData: Record<string, any[]> = {
-        temperatures: [
-          { date: "14/11/2024 10:00", equipment: "Frigo vitrine", temperature: "4°C", status: "Conforme" },
-          { date: "14/11/2024 14:00", equipment: "Chambre froide", temperature: "2°C", status: "Conforme" },
-        ],
-        nettoyage: [
-          { date: "14/11/2024", tache: "Nettoyage sols", categorie: "Sols et surfaces", statut: "Terminé" },
-          { date: "14/11/2024", tache: "Désinfection équipements", categorie: "Équipements", statut: "Terminé" },
-        ],
-        tracabilite: [
-          { date: "14/11/2024 09:30", fournisseur: "Pedrero", codeBarres: "3760050000000", numeroLot: "LOT123456" },
-          { date: "14/11/2024 11:00", fournisseur: "Monin", codeBarres: "3052910000000", numeroLot: "LOT789012" },
-        ],
-        reception: [
-          { date: "14/11/2024", fournisseur: "Metro", categorie: "Produits frais", temperature: "4°C", conformite: "Conforme" },
-          { date: "13/11/2024", fournisseur: "Carte D'or", categorie: "Surgelés", temperature: "-18°C", conformite: "Conforme" },
-        ],
-        historique: [
-          { module: "Températures", action: "Relevé température", date: "14/11/2024 10:00", utilisateur: "Hugo" },
-          { module: "Nettoyage", action: "Tâche terminée", date: "14/11/2024 09:00", utilisateur: "Florian" },
-        ],
-      };
+      // Charger les vraies données depuis storage
+      const realData: Record<string, any[]> = {};
+      
+      if (selectedData.includes('temperatures')) {
+        const saved = await storage.getItem('temperatureReadings');
+        realData.temperatures = saved ? JSON.parse(saved).map((reading: any) => ({
+          date: `${reading.date} ${reading.time}`,
+          equipment: reading.equipment,
+          temperature: reading.temperature,
+          status: reading.status === 'ok' ? 'Conforme' : reading.status === 'warning' ? 'Attention' : 'Alerte'
+        })) : [];
+      }
+      
+      if (selectedData.includes('nettoyage')) {
+        const saved = await storage.getItem('cleaningTasks');
+        realData.nettoyage = saved ? JSON.parse(saved)
+          .filter((task: any) => task.status === 'done')
+          .map((task: any) => ({
+            date: task.time || new Date().toLocaleDateString('fr-FR'),
+            tache: task.name,
+            categorie: task.category,
+            personne: task.person || 'N/A',
+            statut: 'Terminé'
+          })) : [];
+      }
+      
+      if (selectedData.includes('tracabilite')) {
+        const saved = await storage.getItem('tracabiliteEntries');
+        realData.tracabilite = saved ? JSON.parse(saved).map((entry: any) => ({
+          date: entry.date,
+          fournisseur: entry.supplier,
+          codeBarres: entry.barcode,
+          numeroLot: entry.lotNumber
+        })) : [];
+      }
+      
+      if (selectedData.includes('reception')) {
+        const saved = await storage.getItem('receptions');
+        realData.reception = saved ? JSON.parse(saved).map((reception: any) => ({
+          date: reception.date,
+          fournisseur: reception.supplier,
+          categorie: reception.category,
+          conformite: reception.status === 'ok' ? 'Conforme' : 'Non conforme'
+        })) : [];
+      }
+      
+      if (selectedData.includes('historique')) {
+        const saved = await storage.getItem('activities');
+        realData.historique = saved ? JSON.parse(saved).map((activity: any) => ({
+          module: activity.type,
+          action: activity.action,
+          valeur: activity.value || 'N/A',
+          date: `${activity.date} ${activity.time}`,
+          personne: activity.person
+        })) : [];
+      }
 
-      // Combine toutes les données sélectionnées
-      const combinedData = selectedData.flatMap(dataType => mockData[dataType] || []);
+      // Combiner toutes les données sélectionnées
+      const combinedData = selectedData.flatMap(dataType => realData[dataType] || []);
       
       if (combinedData.length === 0) {
         toast.error("Aucune donnée à exporter");

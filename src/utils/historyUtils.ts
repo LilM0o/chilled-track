@@ -1,3 +1,5 @@
+import { storage } from './storage';
+
 export interface HistoryActivity {
   type: "Traçabilité" | "Températures" | "Nettoyage" | "Réception";
   action: string;
@@ -8,10 +10,10 @@ export interface HistoryActivity {
   details?: string;
 }
 
-export const addToHistory = (activity: HistoryActivity) => {
-  const saved = localStorage.getItem('activities');
+export const addToHistory = async (activity: HistoryActivity) => {
+  const saved = await storage.getItem('activities');
   const activities = saved ? JSON.parse(saved) : [];
   activities.unshift(activity); // Ajouter au début
-  localStorage.setItem('activities', JSON.stringify(activities));
+  await storage.setItem('activities', JSON.stringify(activities));
   window.dispatchEvent(new Event('activitiesUpdated'));
 };
