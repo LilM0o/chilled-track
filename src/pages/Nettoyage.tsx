@@ -15,6 +15,7 @@ interface Task {
   time?: string;
   person?: string;
   category: string;
+  days: string[];
 }
 
 const Nettoyage = () => {
@@ -87,8 +88,19 @@ const Nettoyage = () => {
     };
   }, []);
 
-  const completedTasks = tasks.filter(t => t.status === "done");
-  const pendingTasks = tasks.filter(t => t.status === "pending");
+  // Obtenir le jour actuel en français
+  const getCurrentDay = () => {
+    const days = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+    return days[new Date().getDay()];
+  };
+
+  // Filtrer les tâches pour aujourd'hui
+  const todayTasks = tasks.filter(task => 
+    task.days && Array.isArray(task.days) && task.days.includes(getCurrentDay())
+  );
+
+  const completedTasks = todayTasks.filter(t => t.status === "done");
+  const pendingTasks = todayTasks.filter(t => t.status === "pending");
   const allCompleted = pendingTasks.length === 0;
 
   const handleValidateTask = (index: number) => {
@@ -97,7 +109,7 @@ const Nettoyage = () => {
     setOpen(true);
   };
 
-  const handleConfirmValidation = () => {
+  const handleConfirmValidation = async () => {
     if (selectedPerson && selectedTask !== null) {
       const now = new Date();
       const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -109,8 +121,8 @@ const Nettoyage = () => {
             : task
         );
         
-        // Sauvegarder dans localStorage
-        localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+        // Sauvegarder dans storage
+        storage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
         
         // Ajouter à l'historique
         const completedTask = updatedTasks[selectedTask];
@@ -139,7 +151,7 @@ const Nettoyage = () => {
     setEditCompletedOpen(true);
   };
 
-  const handleConfirmEditCompleted = () => {
+  const handleConfirmEditCompleted = async () => {
     if (selectedPerson && selectedTask !== null) {
       const now = new Date();
       
@@ -150,8 +162,8 @@ const Nettoyage = () => {
             : task
         );
         
-        // Sauvegarder dans localStorage
-        localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+        // Sauvegarder dans storage
+        storage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
         
         // Ajouter à l'historique
         const editedTask = updatedTasks[selectedTask];
