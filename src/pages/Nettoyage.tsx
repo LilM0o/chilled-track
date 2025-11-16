@@ -74,14 +74,41 @@ const Nettoyage = () => {
     };
   }, []);
 
+  // Sync cleaning tasks with localStorage changes
+  useEffect(() => {
+    const handleTasksChange = () => {
+      const saved = localStorage.getItem('cleaningTasks');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setTasks(parsed.map((task: any) => ({
+          ...task,
+          status: task.status || "pending",
+          days: Array.isArray(task.days) ? task.days : []
+        })));
+      }
+    };
+
+    window.addEventListener('storage', handleTasksChange);
+    window.addEventListener('cleaningTasksUpdated', handleTasksChange);
+
+    return () => {
+      window.removeEventListener('storage', handleTasksChange);
+      window.removeEventListener('cleaningTasksUpdated', handleTasksChange);
+    };
+  }, []);
+
   const [tasks, setTasks] = useState<Task[]>(() => {
     const saved = localStorage.getItem('cleaningTasks');
-    return saved ? JSON.parse(saved) : [
-      { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "pending", category: "Production" },
-      { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
-      { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
-      { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "pending", category: "Production" },
-    ];
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Ajouter status: "pending" si manquant et s'assurer que days est un tableau
+      return parsed.map((task: any) => ({
+        ...task,
+        status: task.status || "pending",
+        days: Array.isArray(task.days) ? task.days : []
+      }));
+    }
+    return [];
   });
 
   const completedTasks = tasks.filter(t => t.status === "done");

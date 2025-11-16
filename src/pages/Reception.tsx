@@ -22,23 +22,13 @@ const Reception = () => {
   const [category, setCategory] = useState("");
   const [receptions, setReceptions] = useState<Reception[]>(() => {
     const saved = localStorage.getItem('receptions');
-    return saved ? JSON.parse(saved) : [
-      { id: "1", supplier: "Fruits & Légumes Bio", date: "04/11/2025", status: "ok", category: "Fruits et Legumes" },
-      { id: "2", supplier: "Boucherie Centrale", date: "03/11/2025", status: "ok", category: "Viandes" },
-      { id: "3", supplier: "Produits Laitiers", date: "02/11/2025", status: "ok", category: "Crémerie" },
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
   
   // Load suppliers dynamically from localStorage
   const [suppliers, setSuppliers] = useState<string[]>(() => {
     const saved = localStorage.getItem('suppliers');
-    return saved ? JSON.parse(saved) : [
-      "Pedrero",
-      "Monin",
-      "Carte D'or",
-      "Metro",
-      "Delidrinks",
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
   
   const [newSupplier, setNewSupplier] = useState("");

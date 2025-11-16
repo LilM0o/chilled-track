@@ -8,13 +8,7 @@ import { Label } from "@/components/ui/label";
 const FournisseursSettings = () => {
   const [suppliers, setSuppliers] = useState<string[]>(() => {
     const saved = localStorage.getItem('suppliers');
-    return saved ? JSON.parse(saved) : [
-      "Pedrero",
-      "Monin",
-      "Carte D'or",
-      "Metro",
-      "Delidrinks",
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
   const [newSupplier, setNewSupplier] = useState("");
 

@@ -30,13 +30,7 @@ const Tracabilite = () => {
   // Load suppliers dynamically from localStorage
   const [suppliers, setSuppliers] = useState<string[]>(() => {
     const saved = localStorage.getItem('suppliers');
-    return saved ? JSON.parse(saved) : [
-      "Pedrero",
-      "Monin",
-      "Carte D'or",
-      "Metro",
-      "Delidrinks",
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
 
   // Sync with localStorage changes
