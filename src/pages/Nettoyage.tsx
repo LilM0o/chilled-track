@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { addToHistory } from "@/utils/historyUtils";
+import { storage } from "@/utils/storage";
 
 interface Task {
   name: string;
@@ -22,62 +23,51 @@ const Nettoyage = () => {
   const [editCompletedOpen, setEditCompletedOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState("");
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
+  const [personnel, setPersonnel] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  // Load personnel dynamically from localStorage
-  const [personnel, setPersonnel] = useState<string[]>(() => {
-    const stored = localStorage.getItem('personnel');
-    if (stored) {
-      try {
-        const parsedPersonnel = JSON.parse(stored);
-        // Filter only active personnel and extract names
-        return parsedPersonnel
-          .filter((p: any) => p.status === 'active')
-          .map((p: any) => p.name);
-      } catch (e) {
-        return [];
-      }
-    }
-    return [];
-  });
-
-  // Sync with localStorage changes
+  // Charger les données au montage
   useEffect(() => {
-    const handleStorageChange = () => {
-      const stored = localStorage.getItem('personnel');
-      if (stored) {
-        try {
-          const parsedPersonnel = JSON.parse(stored);
-          setPersonnel(
-            parsedPersonnel
-              .filter((p: any) => p.status === 'active')
-              .map((p: any) => p.name)
-          );
-        } catch (e) {
-          setPersonnel([]);
-        }
-      } else {
-        setPersonnel([]);
+    const loadData = async () => {
+      const savedPersonnel = await storage.getItem('personnel');
+      if (savedPersonnel) {
+        const parsedPersonnel = JSON.parse(savedPersonnel);
+        setPersonnel(
+          parsedPersonnel
+            .filter((p: any) => p.status === 'active')
+            .map((p: any) => p.name)
+        );
+      }
+
+      const savedTasks = await storage.getItem('cleaningTasks');
+      if (savedTasks) {
+        const parsed = JSON.parse(savedTasks);
+        setTasks(parsed.map((task: any) => ({
+          ...task,
+          status: task.status || "pending",
+          days: Array.isArray(task.days) ? task.days : []
+        })));
       }
     };
-
-    // Load personnel on mount
-    handleStorageChange();
-
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Also listen for custom event for same-tab updates
-    window.addEventListener('personnelUpdated', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('personnelUpdated', handleStorageChange);
-    };
+    loadData();
   }, []);
 
-  // Sync cleaning tasks with localStorage changes
+  // Écouter les changements
   useEffect(() => {
-    const handleTasksChange = () => {
-      const saved = localStorage.getItem('cleaningTasks');
+    const handlePersonnelChange = async () => {
+      const saved = await storage.getItem('personnel');
+      if (saved) {
+        const parsedPersonnel = JSON.parse(saved);
+        setPersonnel(
+          parsedPersonnel
+            .filter((p: any) => p.status === 'active')
+            .map((p: any) => p.name)
+        );
+      }
+    };
+
+    const handleTasksChange = async () => {
+      const saved = await storage.getItem('cleaningTasks');
       if (saved) {
         const parsed = JSON.parse(saved);
         setTasks(parsed.map((task: any) => ({
@@ -88,28 +78,14 @@ const Nettoyage = () => {
       }
     };
 
-    window.addEventListener('storage', handleTasksChange);
+    window.addEventListener('personnelUpdated', handlePersonnelChange);
     window.addEventListener('cleaningTasksUpdated', handleTasksChange);
 
     return () => {
-      window.removeEventListener('storage', handleTasksChange);
+      window.removeEventListener('personnelUpdated', handlePersonnelChange);
       window.removeEventListener('cleaningTasksUpdated', handleTasksChange);
     };
   }, []);
-
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    const saved = localStorage.getItem('cleaningTasks');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Ajouter status: "pending" si manquant et s'assurer que days est un tableau
-      return parsed.map((task: any) => ({
-        ...task,
-        status: task.status || "pending",
-        days: Array.isArray(task.days) ? task.days : []
-      }));
-    }
-    return [];
-  });
 
   const completedTasks = tasks.filter(t => t.status === "done");
   const pendingTasks = tasks.filter(t => t.status === "pending");
