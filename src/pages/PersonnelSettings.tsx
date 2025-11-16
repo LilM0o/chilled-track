@@ -17,17 +17,28 @@ interface Person {
 const PersonnelSettings = () => {
   const [personnel, setPersonnel] = useState<Person[]>(() => {
     const saved = localStorage.getItem('personnel');
-    return saved ? JSON.parse(saved) : [
-      { id: "1", name: "Hugo", status: "active" },
-      { id: "2", name: "Florian", status: "active" },
-      { id: "3", name: "Lorraine", status: "active" },
-      { id: "4", name: "Lauria", status: "active" },
-      { id: "5", name: "Tim Eliot", status: "active" },
-      { id: "6", name: "Aymene", status: "active" },
-      { id: "7", name: "Meriem", status: "active" },
-      { id: "8", name: "Sy'RAI", status: "active" },
-      { id: "9", name: "Djali", status: "active" },
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Error parsing personnel:', e);
+      }
+    }
+    // Données par défaut si rien dans localStorage
+    const defaultPersonnel = [
+      { id: "1", name: "Hugo", status: "active" as const },
+      { id: "2", name: "Florian", status: "active" as const },
+      { id: "3", name: "Lorraine", status: "active" as const },
+      { id: "4", name: "Lauria", status: "active" as const },
+      { id: "5", name: "Tim Eliot", status: "active" as const },
+      { id: "6", name: "Aymene", status: "active" as const },
+      { id: "7", name: "Meriem", status: "active" as const },
+      { id: "8", name: "Sy'RAI", status: "active" as const },
+      { id: "9", name: "Djali", status: "active" as const },
     ];
+    // Sauvegarder les données par défaut dans localStorage
+    localStorage.setItem('personnel', JSON.stringify(defaultPersonnel));
+    return defaultPersonnel;
   });
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
