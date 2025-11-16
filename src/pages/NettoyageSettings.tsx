@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { storage } from "@/utils/storage";
 
 const NettoyageSettings = () => {
   const [open, setOpen] = useState(false);
@@ -31,24 +32,28 @@ const NettoyageSettings = () => {
     { id: "jeudi", name: "Jeu" },
     { id: "vendredi", name: "Ven" },
     { id: "samedi", name: "Sam" },
+    { id: "dimanche", name: "Dim" },
   ];
 
-  const [cleaningTasks, setCleaningTasks] = useState(() => {
-    const saved = localStorage.getItem('cleaningTasks');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        // Ensure all tasks have a days array
-        return parsed.map((task: any) => ({
-          ...task,
-          days: Array.isArray(task.days) ? task.days : []
-        }));
-      } catch (e) {
-        console.error('Error parsing cleaning tasks:', e);
+  const [cleaningTasks, setCleaningTasks] = useState([]);
+
+  useEffect(() => {
+    const loadTasks = async () => {
+      const saved = await storage.getItem('cleaningTasks');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setCleaningTasks(parsed.map((task: any) => ({
+            ...task,
+            days: Array.isArray(task.days) ? task.days : []
+          })));
+        } catch (e) {
+          console.error('Error parsing cleaning tasks:', e);
+        }
       }
-    }
-    return [];
-  });
+    };
+    loadTasks();
+  }, []);
 
   const toggleDay = (dayId: string) => {
     setSelectedDays(prev =>
@@ -62,17 +67,17 @@ const NettoyageSettings = () => {
     );
   };
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (taskName && selectedDays.length > 0 && selectedCategory) {
       const newTask = {
         name: taskName,
-        frequency: selectedDays.length === 6 ? "Quotidien" : selectedDays.length === 1 ? "Hebdomadaire" : "Personnalisé",
+        frequency: selectedDays.length === 7 ? "Quotidien" : selectedDays.length === 1 ? "Hebdomadaire" : "Personnalisé",
         days: selectedDays,
         category: selectedCategory
       };
       const updatedTasks = [...cleaningTasks, newTask];
       setCleaningTasks(updatedTasks);
-      localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+      await storage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
       window.dispatchEvent(new Event('cleaningTasksUpdated'));
       setOpen(false);
       setTaskName("");
@@ -87,7 +92,7 @@ const NettoyageSettings = () => {
     setEditOpen(true);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (editingTaskIndex !== null && editingDays.length > 0) {
       const task = cleaningTasks[editingTaskIndex];
       if (!task) return;
@@ -96,10 +101,10 @@ const NettoyageSettings = () => {
       updatedTasks[editingTaskIndex] = {
         ...updatedTasks[editingTaskIndex],
         days: editingDays,
-        frequency: editingDays.length === 6 ? "Quotidien" : editingDays.length === 1 ? "Hebdomadaire" : "Personnalisé"
+        frequency: editingDays.length === 7 ? "Quotidien" : editingDays.length === 1 ? "Hebdomadaire" : "Personnalisé"
       };
       setCleaningTasks(updatedTasks);
-      localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+      await storage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
       window.dispatchEvent(new Event('cleaningTasksUpdated'));
       setEditOpen(false);
       setEditingTaskIndex(null);

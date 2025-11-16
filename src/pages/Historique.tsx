@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { storage } from "@/utils/storage";
 
 type Activity = {
   type: string;
@@ -19,16 +20,21 @@ const Historique = () => {
   const navigate = useNavigate();
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [activities, setActivities] = useState<Activity[]>([]);
 
-  const [activities, setActivities] = useState<Activity[]>(() => {
-    const saved = localStorage.getItem('activities');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  // Sync with localStorage changes
+  // Load activities on mount
   useEffect(() => {
-    const handleStorageChange = () => {
-      const saved = localStorage.getItem('activities');
+    const loadActivities = async () => {
+      const saved = await storage.getItem('activities');
+      setActivities(saved ? JSON.parse(saved) : []);
+    };
+    loadActivities();
+  }, []);
+
+  // Sync with storage changes
+  useEffect(() => {
+    const handleStorageChange = async () => {
+      const saved = await storage.getItem('activities');
       if (saved) {
         setActivities(JSON.parse(saved));
       }
