@@ -212,7 +212,7 @@ const Temperatures = () => {
                 warning: { bg: 'bg-orange-100', text: 'text-orange-800', label: 'À surveiller', tempColor: 'text-orange-600' },
                 alert: { bg: 'bg-destructive/20', text: 'text-destructive', label: 'Alerte', tempColor: 'text-destructive' }
               };
-              const colors = statusColors[reading.status];
+              const colors = statusColors[reading.status] || statusColors.ok;
               
               return (
                 <div 
