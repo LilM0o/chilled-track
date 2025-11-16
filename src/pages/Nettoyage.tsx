@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { addToHistory } from "@/utils/historyUtils";
 
 interface Task {
   name: string;
@@ -73,12 +74,15 @@ const Nettoyage = () => {
     };
   }, []);
 
-  const [tasks, setTasks] = useState<Task[]>([
-    { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "done", time: "08:30", person: "Hugo", category: "Production" },
-    { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
-    { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
-    { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "done", time: "01/11", person: "Florian", category: "Production" },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const saved = localStorage.getItem('cleaningTasks');
+    return saved ? JSON.parse(saved) : [
+      { name: "Nettoyage sols cuisine", frequency: "Quotidien", status: "pending", category: "Production" },
+      { name: "Désinfection surfaces", frequency: "Quotidien", status: "pending", category: "Production" },
+      { name: "Nettoyage frigos", frequency: "Hebdomadaire", status: "pending", category: "Reserve" },
+      { name: "Contrôle bacs graisse", frequency: "Mensuel", status: "pending", category: "Production" },
+    ];
+  });
 
   const completedTasks = tasks.filter(t => t.status === "done");
   const pendingTasks = tasks.filter(t => t.status === "pending");
@@ -95,13 +99,30 @@ const Nettoyage = () => {
       const now = new Date();
       const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
       
-      setTasks(prevTasks => 
-        prevTasks.map((task, idx) => 
+      setTasks(prevTasks => {
+        const updatedTasks = prevTasks.map((task, idx) => 
           idx === selectedTask 
             ? { ...task, status: "done" as const, time, person: selectedPerson }
             : task
-        )
-      );
+        );
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+        
+        // Ajouter à l'historique
+        const completedTask = updatedTasks[selectedTask];
+        addToHistory({
+          type: "Nettoyage",
+          action: "Tâche complétée",
+          value: completedTask.name,
+          time: time,
+          date: now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }),
+          person: selectedPerson,
+          details: `Fréquence: ${completedTask.frequency} - Catégorie: ${completedTask.category}`
+        });
+        
+        return updatedTasks;
+      });
       
       setOpen(false);
       setSelectedPerson("");
@@ -117,13 +138,33 @@ const Nettoyage = () => {
 
   const handleConfirmEditCompleted = () => {
     if (selectedPerson && selectedTask !== null) {
-      setTasks(prevTasks => 
-        prevTasks.map((task, idx) => 
+      const now = new Date();
+      
+      setTasks(prevTasks => {
+        const updatedTasks = prevTasks.map((task, idx) => 
           idx === selectedTask 
             ? { ...task, person: selectedPerson }
             : task
-        )
-      );
+        );
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+        
+        // Ajouter à l'historique
+        const editedTask = updatedTasks[selectedTask];
+        const oldPerson = tasks[selectedTask].person || "Inconnu";
+        addToHistory({
+          type: "Nettoyage",
+          action: "Modification tâche",
+          value: editedTask.name,
+          time: editedTask.time || "",
+          date: now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }),
+          person: selectedPerson,
+          details: `Personne modifiée: ${oldPerson} → ${selectedPerson}`
+        });
+        
+        return updatedTasks;
+      });
       
       setEditCompletedOpen(false);
       setSelectedPerson("");

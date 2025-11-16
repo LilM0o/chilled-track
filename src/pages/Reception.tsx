@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { addToHistory } from "@/utils/historyUtils";
 
 interface Reception {
   id: string;
@@ -19,11 +20,14 @@ const Reception = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState("");
   const [category, setCategory] = useState("");
-  const [receptions, setReceptions] = useState<Reception[]>([
-    { id: "1", supplier: "Fruits & Légumes Bio", date: "04/11/2025", status: "ok", category: "Fruits et Legumes" },
-    { id: "2", supplier: "Boucherie Centrale", date: "03/11/2025", status: "ok", category: "Viandes" },
-    { id: "3", supplier: "Produits Laitiers", date: "02/11/2025", status: "ok", category: "Crémerie" },
-  ]);
+  const [receptions, setReceptions] = useState<Reception[]>(() => {
+    const saved = localStorage.getItem('receptions');
+    return saved ? JSON.parse(saved) : [
+      { id: "1", supplier: "Fruits & Légumes Bio", date: "04/11/2025", status: "ok", category: "Fruits et Legumes" },
+      { id: "2", supplier: "Boucherie Centrale", date: "03/11/2025", status: "ok", category: "Viandes" },
+      { id: "3", supplier: "Produits Laitiers", date: "02/11/2025", status: "ok", category: "Crémerie" },
+    ];
+  });
   
   // Load suppliers dynamically from localStorage
   const [suppliers, setSuppliers] = useState<string[]>(() => {
@@ -83,15 +87,32 @@ const Reception = () => {
 
   const handleSubmit = () => {
     if (supplier && category) {
+      const now = new Date();
       const newReception: Reception = {
         id: Date.now().toString(),
         supplier,
         category,
-        date: new Date().toLocaleDateString('fr-FR'),
+        date: now.toLocaleDateString('fr-FR'),
         status: "ok",
       };
       
-      setReceptions([newReception, ...receptions]);
+      const updatedReceptions = [newReception, ...receptions];
+      setReceptions(updatedReceptions);
+      
+      // Sauvegarder dans localStorage
+      localStorage.setItem('receptions', JSON.stringify(updatedReceptions));
+      
+      // Ajouter à l'historique
+      addToHistory({
+        type: "Réception",
+        action: "Nouvelle réception",
+        value: `${supplier} - ${category}`,
+        time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        date: now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }),
+        person: "Système",
+        details: `Fournisseur: ${supplier} - Catégorie: ${category}`
+      });
+      
       setOpen(false);
       setSupplier("");
       setCategory("");

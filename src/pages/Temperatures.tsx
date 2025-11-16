@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { addToHistory } from "@/utils/historyUtils";
 
 interface TemperatureReading {
   id: string;
@@ -122,6 +123,18 @@ const Temperatures = () => {
       const updatedReadings = [newReading, ...readings];
       setReadings(updatedReadings);
       localStorage.setItem('temperatureReadings', JSON.stringify(updatedReadings));
+      
+      // Ajouter à l'historique
+      const statusText = status === 'ok' ? 'Conforme' : status === 'warning' ? 'Attention' : 'Alerte';
+      addToHistory({
+        type: "Températures",
+        action: "Relevé de température",
+        value: `${selectedEquipment} - ${temperature.includes('°') ? temperature : `${temperature}°C`}`,
+        time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        date: now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }),
+        person: "Système",
+        details: `Température ${statusText.toLowerCase()} - ${selectedEquipment}${targetTemp ? ` (Cible: ${targetTemp})` : ''}`
+      });
       
       setOpen(false);
       setSelectedEquipment("");
