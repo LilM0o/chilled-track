@@ -21,7 +21,10 @@ const Tracabilite = () => {
   const [barcode, setBarcode] = useState<string>("");
   const [lotNumber, setLotNumber] = useState<string>("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [entries, setEntries] = useState<TracabiliteEntry[]>([]);
+  const [entries, setEntries] = useState<TracabiliteEntry[]>(() => {
+    const saved = localStorage.getItem('tracabiliteEntries');
+    return saved ? JSON.parse(saved) : [];
+  });
   
   // Load suppliers dynamically from localStorage
   const [suppliers, setSuppliers] = useState<string[]>(() => {
@@ -90,7 +93,10 @@ const Tracabilite = () => {
         supplier: selectedSupplier,
       };
       
-      setEntries([newEntry, ...entries]);
+      const updatedEntries = [newEntry, ...entries];
+      setEntries(updatedEntries);
+      localStorage.setItem('tracabiliteEntries', JSON.stringify(updatedEntries));
+      
       setOpen(false);
       setScannedImage("");
       setBarcode("");
@@ -208,29 +214,36 @@ const Tracabilite = () => {
 
         <div className="mt-8 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <h3 className="text-lg font-semibold mb-4">Produits récents</h3>
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div 
-                key={i} 
-                className="bg-card rounded-2xl p-4 shadow-sm 
-                  transition-all duration-300 hover:shadow-md hover:scale-[1.01]
-                  cursor-pointer animate-fade-in-up"
-                style={{ animationDelay: `${0.3 + i * 0.1}s` }}
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-medium">Produit {i}</h4>
-                    <p className="text-sm text-muted-foreground">Fournisseur: Pedrero</p>
-                    <p className="text-xs text-muted-foreground mt-1">04/11/2025 - 14:30</p>
+          {entries.length === 0 ? (
+            <div className="bg-card rounded-2xl p-8 text-center">
+              <p className="text-muted-foreground">Aucun produit enregistré</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {entries.map((entry, i) => (
+                <div 
+                  key={entry.id} 
+                  className="bg-card rounded-2xl p-4 shadow-sm 
+                    transition-all duration-300 hover:shadow-md hover:scale-[1.01]
+                    cursor-pointer animate-fade-in-up"
+                  style={{ animationDelay: `${0.3 + i * 0.1}s` }}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium">Code-barres: {entry.barcode}</h4>
+                      <p className="text-sm text-muted-foreground">Lot: {entry.lotNumber}</p>
+                      <p className="text-sm text-muted-foreground">Fournisseur: {entry.supplier}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{entry.date}</p>
+                    </div>
+                    <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs
+                      animate-pulse-soft shadow-sm">
+                      OK
+                    </span>
                   </div>
-                  <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs
-                    animate-pulse-soft shadow-sm">
-                    OK
-                  </span>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
