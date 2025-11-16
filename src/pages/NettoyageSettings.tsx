@@ -47,16 +47,7 @@ const NettoyageSettings = () => {
         console.error('Error parsing cleaning tasks:', e);
       }
     }
-    return [
-      { name: "Nettoyage sols cuisine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
-      { name: "Désinfection surfaces", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
-      { name: "Nettoyage frigos", frequency: "Hebdomadaire", days: ["vendredi"], category: "Reserve" },
-      { name: "Contrôle bacs graisse", frequency: "Mensuel", days: ["samedi"], category: "Production" },
-      { name: "Nettoyage hotte", frequency: "Hebdomadaire", days: ["mercredi"], category: "Production" },
-      { name: "Rangement stocks", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Reserve" },
-      { name: "Nettoyage vitrine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Magasin" },
-      { name: "Contrôle électrique", frequency: "Mensuel", days: ["samedi"], category: "TGBT" },
-    ];
+    return [];
   });
 
   const toggleDay = (dayId: string) => {
@@ -82,6 +73,7 @@ const NettoyageSettings = () => {
       const updatedTasks = [...cleaningTasks, newTask];
       setCleaningTasks(updatedTasks);
       localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+      window.dispatchEvent(new Event('cleaningTasksUpdated'));
       setOpen(false);
       setTaskName("");
       setSelectedDays([]);
@@ -108,6 +100,7 @@ const NettoyageSettings = () => {
       };
       setCleaningTasks(updatedTasks);
       localStorage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+      window.dispatchEvent(new Event('cleaningTasksUpdated'));
       setEditOpen(false);
       setEditingTaskIndex(null);
       setEditingDays([]);
