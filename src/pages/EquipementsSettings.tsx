@@ -12,7 +12,6 @@ const EquipementsSettings = () => {
   const [open, setOpen] = useState(false);
   const [newEquipmentName, setNewEquipmentName] = useState("");
   const [newEquipmentType, setNewEquipmentType] = useState("");
-  const [newEquipmentTemp, setNewEquipmentTemp] = useState("");
   
   const [equipments, setEquipments] = useState(() => {
     const saved = localStorage.getItem('equipments');
@@ -37,12 +36,21 @@ const EquipementsSettings = () => {
   });
 
   const handleAddEquipment = () => {
-    if (newEquipmentName && newEquipmentType && newEquipmentTemp) {
+    if (newEquipmentName && newEquipmentType) {
       const icon = newEquipmentType === "Réfrigérateur" ? Refrigerator : Snowflake;
+      
+      // Température automatique selon les normes HACCP
+      let temp = "";
+      if (newEquipmentType === "Réfrigérateur") {
+        temp = "3°C"; // Norme: entre 2 et 5°C
+      } else if (newEquipmentType === "Congélateur") {
+        temp = "-18°C"; // Norme HACCP
+      }
+      
       const newEquipment = {
         name: newEquipmentName,
         type: newEquipmentType,
-        temp: newEquipmentTemp,
+        temp,
         status: "ok",
         icon
       };
@@ -53,7 +61,6 @@ const EquipementsSettings = () => {
       setOpen(false);
       setNewEquipmentName("");
       setNewEquipmentType("");
-      setNewEquipmentTemp("");
     }
   };
 
@@ -153,19 +160,15 @@ const EquipementsSettings = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="equipment-temp">Température cible</Label>
-                <Input
-                  id="equipment-temp"
-                  placeholder="Ex: 3°C ou -18°C"
-                  value={newEquipmentTemp}
-                  onChange={(e) => setNewEquipmentTemp(e.target.value)}
-                />
+              <div className="p-3 bg-secondary/50 rounded-lg text-sm text-muted-foreground">
+                <p className="font-medium mb-1">Température définie automatiquement :</p>
+                <p>• Réfrigérateurs : 3°C (norme 2-5°C)</p>
+                <p>• Congélateurs : -18°C (norme HACCP)</p>
               </div>
               <Button 
                 onClick={handleAddEquipment} 
                 className="w-full"
-                disabled={!newEquipmentName || !newEquipmentType || !newEquipmentTemp}
+                disabled={!newEquipmentName || !newEquipmentType}
               >
                 Ajouter
               </Button>

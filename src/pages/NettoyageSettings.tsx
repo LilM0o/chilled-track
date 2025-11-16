@@ -35,7 +35,19 @@ const NettoyageSettings = () => {
 
   const [cleaningTasks, setCleaningTasks] = useState(() => {
     const saved = localStorage.getItem('cleaningTasks');
-    return saved ? JSON.parse(saved) : [
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Ensure all tasks have a days array
+        return parsed.map((task: any) => ({
+          ...task,
+          days: Array.isArray(task.days) ? task.days : []
+        }));
+      } catch (e) {
+        console.error('Error parsing cleaning tasks:', e);
+      }
+    }
+    return [
       { name: "Nettoyage sols cuisine", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
       { name: "Désinfection surfaces", frequency: "Quotidien", days: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], category: "Production" },
       { name: "Nettoyage frigos", frequency: "Hebdomadaire", days: ["vendredi"], category: "Reserve" },
@@ -85,6 +97,9 @@ const NettoyageSettings = () => {
 
   const handleSaveEdit = () => {
     if (editingTaskIndex !== null && editingDays.length > 0) {
+      const task = cleaningTasks[editingTaskIndex];
+      if (!task) return;
+      
       const updatedTasks = [...cleaningTasks];
       updatedTasks[editingTaskIndex] = {
         ...updatedTasks[editingTaskIndex],
@@ -240,7 +255,7 @@ const NettoyageSettings = () => {
                         <div className="flex-1">
                           <h3 className="font-medium text-foreground">{task.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {task.frequency} • {task.days.map(d => daysOfWeek.find(day => day.id === d)?.name).join(", ")}
+                            {task.frequency} • {(task.days || []).map(d => daysOfWeek.find(day => day.id === d)?.name).filter(Boolean).join(", ")}
                           </p>
                         </div>
                         <Button

@@ -18,6 +18,7 @@ interface Task {
 const Nettoyage = () => {
   const [open, setOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [editCompletedOpen, setEditCompletedOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState("");
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
 
@@ -105,6 +106,28 @@ const Nettoyage = () => {
     }
   };
 
+  const handleEditCompletedTask = (taskIndex: number) => {
+    setSelectedTask(taskIndex);
+    setSelectedPerson(tasks[taskIndex].person || "");
+    setEditCompletedOpen(true);
+  };
+
+  const handleConfirmEditCompleted = () => {
+    if (selectedPerson && selectedTask !== null) {
+      setTasks(prevTasks => 
+        prevTasks.map((task, idx) => 
+          idx === selectedTask 
+            ? { ...task, person: selectedPerson }
+            : task
+        )
+      );
+      
+      setEditCompletedOpen(false);
+      setSelectedPerson("");
+      setSelectedTask(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pb-8">
       <header className="bg-module-orange backdrop-blur-md rounded-b-3xl px-6 py-5 mb-8 shadow-md sticky top-0 z-40 animate-fade-in">
@@ -115,15 +138,6 @@ const Nettoyage = () => {
             </Button>
           </Link>
           <h1 className="text-2xl font-bold text-primary">Plan de Nettoyage</h1>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="ml-auto"
-            onClick={() => setHistoryOpen(true)}
-          >
-            <History className="w-4 h-4 mr-2" />
-            Historique
-          </Button>
         </div>
       </header>
 
@@ -186,10 +200,11 @@ const Nettoyage = () => {
                 <div 
                   key={taskIndex} 
                   className={cn(
-                    "rounded-2xl p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01] animate-fade-in-up",
+                    "rounded-2xl p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01] animate-fade-in-up cursor-pointer",
                     allCompleted ? "bg-accent/20 border-2 border-accent" : "bg-card"
                   )}
                   style={{ animationDelay: `${0.3 + i * 0.1}s` }}
+                  onClick={() => handleEditCompletedTask(taskIndex)}
                 >
                   <div className="flex items-start gap-3">
                     <div className="mt-1">
@@ -200,7 +215,7 @@ const Nettoyage = () => {
                     </div>
                     <div className="flex-1">
                       <h4 className="font-medium">{task.name}</h4>
-                  <p className="text-sm text-muted-foreground">{task.category} • {task.frequency}</p>
+                      <p className="text-sm text-muted-foreground">{task.category} • {task.frequency}</p>
                       {task.time && (
                         <p className="text-xs text-muted-foreground mt-1">
                           Fait à {task.time} par {task.person}
@@ -223,8 +238,13 @@ const Nettoyage = () => {
           <div className="space-y-4 py-4">
             <div className="space-y-3">
               <Label>Qui a effectué cette tâche ?</Label>
-              <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
-                {personnel.map((person) => (
+              {personnel.length === 0 ? (
+                <p className="text-sm text-muted-foreground p-4 bg-muted/50 rounded-lg">
+                  Aucun personnel actif. Ajoutez du personnel dans Paramètres {">"} Personnel.
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
+                  {personnel.map((person) => (
                   <Button
                     key={person}
                     type="button"
@@ -239,10 +259,11 @@ const Nettoyage = () => {
                   >
                     {person}
                   </Button>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <Button 
+            <Button
               onClick={handleConfirmValidation} 
               className="w-full"
               disabled={!selectedPerson}
@@ -279,6 +300,50 @@ const Nettoyage = () => {
                 </div>
               ))
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={editCompletedOpen} onOpenChange={setEditCompletedOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Modifier la personne</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-3">
+              <Label>Qui a effectué cette tâche ?</Label>
+              {personnel.length === 0 ? (
+                <p className="text-sm text-muted-foreground p-4 bg-muted/50 rounded-lg">
+                  Aucun personnel actif. Ajoutez du personnel dans Paramètres {">"} Personnel.
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
+                  {personnel.map((person) => (
+                    <Button
+                      key={person}
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "h-auto py-3 px-4 text-sm font-normal transition-all duration-200",
+                        selectedPerson === person
+                          ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground"
+                          : "hover:bg-accent"
+                      )}
+                      onClick={() => setSelectedPerson(person)}
+                    >
+                      {person}
+                    </Button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <Button 
+              onClick={handleConfirmEditCompleted} 
+              className="w-full"
+              disabled={!selectedPerson}
+            >
+              Confirmer
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

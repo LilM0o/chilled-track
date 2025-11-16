@@ -7,10 +7,25 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
+interface TemperatureReading {
+  id: string;
+  equipment: string;
+  temperature: string;
+  date: string;
+  time: string;
+  status: 'ok' | 'warning' | 'alert';
+  targetTemp?: string;
+}
+
 const Temperatures = () => {
   const [open, setOpen] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState("");
   const [temperature, setTemperature] = useState("");
+
+  const [readings, setReadings] = useState<TemperatureReading[]>(() => {
+    const saved = localStorage.getItem('temperatureReadings');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // Load equipments dynamically from localStorage
   const [equipments, setEquipments] = useState<string[]>(() => {
@@ -61,15 +76,53 @@ const Temperatures = () => {
     };
   }, []);
 
-  const fridges = [
-    { name: "Frigo aliments", temp: "3°C", status: "ok", time: "Il y a 10 min" },
-    { name: "Réfrigérateur Bar", temp: "4°C", status: "ok", time: "Il y a 25 min" },
-    { name: "Congélateur 1", temp: "-18°C", status: "ok", time: "Il y a 1h" },
-  ];
-
   const handleSubmit = () => {
     if (selectedEquipment && temperature) {
-      // Ici, ajouter la logique pour sauvegarder le relevé
+      // Get equipment info to determine status
+      const saved = localStorage.getItem('equipments');
+      let targetTemp = "";
+      let status: 'ok' | 'warning' | 'alert' = 'ok';
+      
+      if (saved) {
+        try {
+          const equipments = JSON.parse(saved);
+          const equipment = equipments.find((eq: any) => eq.name === selectedEquipment);
+          if (equipment) {
+            targetTemp = equipment.temp;
+            
+            // Extract numeric value from temperature strings
+            const currentTemp = parseFloat(temperature);
+            const target = parseFloat(targetTemp);
+            
+            if (!isNaN(currentTemp) && !isNaN(target)) {
+              const diff = Math.abs(currentTemp - target);
+              if (diff > 2) {
+                status = 'alert';
+              } else if (diff > 1) {
+                status = 'warning';
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Error parsing equipments:', e);
+        }
+      }
+      
+      const now = new Date();
+      const newReading: TemperatureReading = {
+        id: Date.now().toString(),
+        equipment: selectedEquipment,
+        temperature: temperature.includes('°') ? temperature : `${temperature}°C`,
+        date: now.toLocaleDateString('fr-FR'),
+        time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        status,
+        targetTemp
+      };
+      
+      const updatedReadings = [newReading, ...readings];
+      setReadings(updatedReadings);
+      localStorage.setItem('temperatureReadings', JSON.stringify(updatedReadings));
+      
       setOpen(false);
       setSelectedEquipment("");
       setTemperature("");
@@ -148,28 +201,46 @@ const Temperatures = () => {
 
         <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <h3 className="text-lg font-semibold">Derniers relevés</h3>
-          {fridges.map((fridge, i) => (
-            <div 
-              key={i} 
-              className="bg-card rounded-2xl p-4 shadow-sm
-                transition-all duration-300 hover:shadow-md hover:scale-[1.01]
-                cursor-pointer animate-fade-in-up"
-              style={{ animationDelay: `${0.3 + i * 0.1}s` }}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h4 className="font-medium">{fridge.name}</h4>
-                  <p className="text-2xl font-bold text-module-green-foreground mt-1 transition-transform duration-300 hover:scale-105">
-                    {fridge.temp}
-                  </p>
-                </div>
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                  Conforme
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground">{fridge.time}</p>
+          {readings.length === 0 ? (
+            <div className="bg-card rounded-2xl p-8 text-center">
+              <p className="text-muted-foreground">Aucun relevé enregistré</p>
             </div>
-          ))}
+          ) : (
+            readings.slice(0, 10).map((reading, i) => {
+              const statusColors = {
+                ok: { bg: 'bg-accent', text: 'text-accent-foreground', label: 'Conforme', tempColor: 'text-module-green-foreground' },
+                warning: { bg: 'bg-orange-100', text: 'text-orange-800', label: 'À surveiller', tempColor: 'text-orange-600' },
+                alert: { bg: 'bg-destructive/20', text: 'text-destructive', label: 'Alerte', tempColor: 'text-destructive' }
+              };
+              const colors = statusColors[reading.status];
+              
+              return (
+                <div 
+                  key={reading.id} 
+                  className="bg-card rounded-2xl p-4 shadow-sm
+                    transition-all duration-300 hover:shadow-md hover:scale-[1.01]
+                    cursor-pointer animate-fade-in-up"
+                  style={{ animationDelay: `${0.3 + i * 0.1}s` }}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-medium">{reading.equipment}</h4>
+                      <p className={cn("text-2xl font-bold mt-1 transition-transform duration-300 hover:scale-105", colors.tempColor)}>
+                        {reading.temperature}
+                      </p>
+                      {reading.targetTemp && (
+                        <p className="text-xs text-muted-foreground mt-1">Cible: {reading.targetTemp}</p>
+                      )}
+                    </div>
+                    <span className={cn("px-3 py-1 rounded-full text-xs font-medium shadow-sm", colors.bg, colors.text)}>
+                      {colors.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{reading.date} à {reading.time}</p>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
