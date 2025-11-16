@@ -59,6 +59,9 @@ const Nettoyage = () => {
       }
     };
 
+    // Load personnel on mount
+    handleStorageChange();
+
     window.addEventListener('storage', handleStorageChange);
     
     // Also listen for custom event for same-tab updates
