@@ -1,7 +1,7 @@
 import { ArrowLeft, BarChart3, Home, Thermometer, SprayCan, Package, Truck, Clock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -20,35 +20,28 @@ const Historique = () => {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
-  const activities: Activity[] = [
-    { 
-      type: "Réception", 
-      action: "Nouvelle réception", 
-      value: "Ferme Bio du Terroir - 5 articles", 
-      time: "08:30", 
-      date: "04 janvier 2025",
-      person: "Marie Dubois",
-      details: "Température camion: 4°C - Articles: Poulet fermier (x3), Œufs bio (x2)"
-    },
-    { 
-      type: "Températures", 
-      action: "Relevé de température", 
-      value: "Frigo principal - 3.5°C", 
-      time: "08:15", 
-      date: "04 janvier 2025",
-      person: "Marie Dubois",
-      details: "Température conforme - Frigo principal"
-    },
-    { 
-      type: "Nettoyage", 
-      action: "Tâche complétée", 
-      value: "Nettoyage des plans de travail", 
-      time: "08:00", 
-      date: "04 janvier 2025",
-      person: "Marie Dubois",
-      details: "Nettoyage effectué selon le protocole - Produits utilisés: Désinfectant alimentaire"
-    },
-  ];
+  const [activities, setActivities] = useState<Activity[]>(() => {
+    const saved = localStorage.getItem('activities');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Sync with localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('activities');
+      if (saved) {
+        setActivities(JSON.parse(saved));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('activitiesUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('activitiesUpdated', handleStorageChange);
+    };
+  }, []);
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -115,55 +108,65 @@ const Historique = () => {
 
           {["Tout", "Traçabilité", "Températures", "Nettoyage", "Réception"].map((filter) => (
             <TabsContent key={filter} value={filter} className="space-y-6">
-              {filterActivities(filter).reduce((acc, activity) => {
-                const lastGroup = acc[acc.length - 1];
-                if (!lastGroup || lastGroup.date !== activity.date) {
-                  acc.push({ date: activity.date, items: [activity] });
-                } else {
-                  lastGroup.items.push(activity);
-                }
-                return acc;
-              }, [] as { date: string; items: Activity[] }[]).map((group, groupIndex) => (
-                <div key={groupIndex}>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-3">{group.date}</h3>
-                  <div className="space-y-3">
-                    {group.items.map((activity, i) => (
-                      <div
-                        key={i}
-                        onClick={() => handleActivityClick(activity)}
-                        className="bg-card rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className={`p-2 rounded-xl ${getColor(activity.type)}`}>
-                            {getIcon(activity.type)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <h4 className="font-medium">{activity.action}</h4>
-                                {activity.value && (
-                                  <p className="text-sm text-muted-foreground mt-1">{activity.value}</p>
-                                )}
-                              </div>
-                              <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap">
-                                {activity.type}
-                              </span>
+              {filterActivities(filter).length === 0 ? (
+                <div className="text-center py-12">
+                  <Clock className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-lg text-muted-foreground">Aucune activité enregistrée</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Les actions effectuées dans l'application apparaîtront ici
+                  </p>
+                </div>
+              ) : (
+                filterActivities(filter).reduce((acc, activity) => {
+                  const lastGroup = acc[acc.length - 1];
+                  if (!lastGroup || lastGroup.date !== activity.date) {
+                    acc.push({ date: activity.date, items: [activity] });
+                  } else {
+                    lastGroup.items.push(activity);
+                  }
+                  return acc;
+                }, [] as { date: string; items: Activity[] }[]).map((group, groupIndex) => (
+                  <div key={groupIndex}>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-3">{group.date}</h3>
+                    <div className="space-y-3">
+                      {group.items.map((activity, i) => (
+                        <div
+                          key={i}
+                          onClick={() => handleActivityClick(activity)}
+                          className="bg-card rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={`p-2 rounded-xl ${getColor(activity.type)}`}>
+                              {getIcon(activity.type)}
                             </div>
-                            <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {activity.time}
-                              </span>
-                              <span>•</span>
-                              <span>{activity.person}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-medium">{activity.action}</h4>
+                                  {activity.value && (
+                                    <p className="text-sm text-muted-foreground mt-1">{activity.value}</p>
+                                  )}
+                                </div>
+                                <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap">
+                                  {activity.type}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {activity.time}
+                                </span>
+                                <span>•</span>
+                                <span>{activity.person}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </TabsContent>
           ))}
         </Tabs>

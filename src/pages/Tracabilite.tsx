@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { addToHistory } from "@/utils/historyUtils";
 
 interface TracabiliteEntry {
   id: string;
@@ -85,9 +86,10 @@ const Tracabilite = () => {
 
   const handleSubmit = () => {
     if (selectedSupplier && barcode && lotNumber) {
+      const now = new Date();
       const newEntry: TracabiliteEntry = {
         id: Date.now().toString(),
-        date: new Date().toLocaleString('fr-FR'),
+        date: now.toLocaleString('fr-FR'),
         barcode,
         lotNumber,
         supplier: selectedSupplier,
@@ -96,6 +98,17 @@ const Tracabilite = () => {
       const updatedEntries = [newEntry, ...entries];
       setEntries(updatedEntries);
       localStorage.setItem('tracabiliteEntries', JSON.stringify(updatedEntries));
+      
+      // Ajouter à l'historique
+      addToHistory({
+        type: "Traçabilité",
+        action: "Nouveau produit enregistré",
+        value: `${selectedSupplier} - ${barcode}`,
+        time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        date: now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }),
+        person: "Système",
+        details: `Code-barres: ${barcode} - Lot: ${lotNumber} - Fournisseur: ${selectedSupplier}`
+      });
       
       setOpen(false);
       setScannedImage("");
