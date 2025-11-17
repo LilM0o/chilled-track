@@ -27,9 +27,26 @@ const Reception = () => {
   // Load data on mount
   useEffect(() => {
     const loadData = async () => {
-      const savedReceptions = await storage.getItem('receptions');
-      const savedSuppliers = await storage.getItem('suppliers');
+      // Migrer receptions
+      let savedReceptions = await storage.getItem('receptions');
+      if (!savedReceptions) {
+        const localData = localStorage.getItem('receptions');
+        if (localData) {
+          await storage.setItem('receptions', localData);
+          savedReceptions = localData;
+        }
+      }
       setReceptions(savedReceptions ? JSON.parse(savedReceptions) : []);
+
+      // Migrer suppliers
+      let savedSuppliers = await storage.getItem('suppliers');
+      if (!savedSuppliers) {
+        const localData = localStorage.getItem('suppliers');
+        if (localData) {
+          await storage.setItem('suppliers', localData);
+          savedSuppliers = localData;
+        }
+      }
       setSuppliers(savedSuppliers ? JSON.parse(savedSuppliers) : []);
     };
     loadData();
