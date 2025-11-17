@@ -39,7 +39,19 @@ const NettoyageSettings = () => {
 
   useEffect(() => {
     const loadTasks = async () => {
-      const saved = await storage.getItem('cleaningTasks');
+      // Essayer d'abord de charger depuis storage
+      let saved = await storage.getItem('cleaningTasks');
+      
+      // Si rien dans storage, migrer depuis localStorage
+      if (!saved) {
+        const localStorageData = localStorage.getItem('cleaningTasks');
+        if (localStorageData) {
+          await storage.setItem('cleaningTasks', localStorageData);
+          saved = localStorageData;
+          console.log('Migrated cleaning tasks from localStorage to storage');
+        }
+      }
+      
       if (saved) {
         try {
           const parsed = JSON.parse(saved);

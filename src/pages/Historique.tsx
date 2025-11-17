@@ -25,7 +25,15 @@ const Historique = () => {
   // Load activities on mount
   useEffect(() => {
     const loadActivities = async () => {
-      const saved = await storage.getItem('activities');
+      // Migrer depuis localStorage si nécessaire
+      let saved = await storage.getItem('activities');
+      if (!saved) {
+        const localData = localStorage.getItem('activities');
+        if (localData) {
+          await storage.setItem('activities', localData);
+          saved = localData;
+        }
+      }
       setActivities(saved ? JSON.parse(saved) : []);
     };
     loadActivities();

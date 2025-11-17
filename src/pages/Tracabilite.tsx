@@ -29,9 +29,26 @@ const Tracabilite = () => {
   // Load data on mount
   useEffect(() => {
     const loadData = async () => {
-      const savedEntries = await storage.getItem('tracabiliteEntries');
-      const savedSuppliers = await storage.getItem('suppliers');
+      // Migrer tracabiliteEntries
+      let savedEntries = await storage.getItem('tracabiliteEntries');
+      if (!savedEntries) {
+        const localData = localStorage.getItem('tracabiliteEntries');
+        if (localData) {
+          await storage.setItem('tracabiliteEntries', localData);
+          savedEntries = localData;
+        }
+      }
       setEntries(savedEntries ? JSON.parse(savedEntries) : []);
+
+      // Migrer suppliers
+      let savedSuppliers = await storage.getItem('suppliers');
+      if (!savedSuppliers) {
+        const localData = localStorage.getItem('suppliers');
+        if (localData) {
+          await storage.setItem('suppliers', localData);
+          savedSuppliers = localData;
+        }
+      }
       setSuppliers(savedSuppliers ? JSON.parse(savedSuppliers) : []);
     };
     loadData();

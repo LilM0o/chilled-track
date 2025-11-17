@@ -30,7 +30,15 @@ const Nettoyage = () => {
   // Charger les données au montage
   useEffect(() => {
     const loadData = async () => {
-      const savedPersonnel = await storage.getItem('personnel');
+      // Migrer personnel
+      let savedPersonnel = await storage.getItem('personnel');
+      if (!savedPersonnel) {
+        const localData = localStorage.getItem('personnel');
+        if (localData) {
+          await storage.setItem('personnel', localData);
+          savedPersonnel = localData;
+        }
+      }
       if (savedPersonnel) {
         const parsedPersonnel = JSON.parse(savedPersonnel);
         setPersonnel(
@@ -40,7 +48,15 @@ const Nettoyage = () => {
         );
       }
 
-      const savedTasks = await storage.getItem('cleaningTasks');
+      // Migrer cleaningTasks
+      let savedTasks = await storage.getItem('cleaningTasks');
+      if (!savedTasks) {
+        const localData = localStorage.getItem('cleaningTasks');
+        if (localData) {
+          await storage.setItem('cleaningTasks', localData);
+          savedTasks = localData;
+        }
+      }
       if (savedTasks) {
         const parsed = JSON.parse(savedTasks);
         setTasks(parsed.map((task: any) => ({
