@@ -65,7 +65,36 @@ const Nettoyage = () => {
           days: Array.isArray(task.days) ? task.days : []
         })));
       }
+      
+      // Réinitialisation journalière des tâches
+      await resetDailyTasks();
     };
+    
+    const resetDailyTasks = async () => {
+      const lastResetDate = await storage.getItem('lastTaskReset');
+      const today = new Date().toDateString();
+      
+      if (lastResetDate !== today) {
+        // Charger les tâches actuelles
+        const savedTasks = await storage.getItem('cleaningTasks');
+        if (savedTasks) {
+          const parsed = JSON.parse(savedTasks);
+          // Réinitialiser toutes les tâches à "pending"
+          const updatedTasks = parsed.map((task: any) => ({
+            ...task,
+            status: "pending" as const,
+            time: undefined,
+            person: undefined,
+            days: Array.isArray(task.days) ? task.days : []
+          }));
+          
+          await storage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
+          await storage.setItem('lastTaskReset', today);
+          setTasks(updatedTasks);
+        }
+      }
+    };
+    
     loadData();
   }, []);
 
@@ -118,7 +147,21 @@ const Nettoyage = () => {
     if (!task.days || !Array.isArray(task.days) || task.days.length === 0) {
       return true;
     }
-    // Sinon, filtrer par jour actuel
+    
+    // TÂCHES NON COMPLÉTÉES : toujours visibles jusqu'à validation
+    if (task.status === "pending") {
+      const currentDay = getCurrentDay();
+      const dayOrder = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+      const currentDayIndex = dayOrder.indexOf(currentDay);
+      
+      // Vérifier si au moins un des jours programmés est passé ou actuel
+      return task.days.some(day => {
+        const taskDayIndex = dayOrder.indexOf(day);
+        return taskDayIndex <= currentDayIndex;
+      });
+    }
+    
+    // TÂCHES COMPLÉTÉES : afficher seulement le jour programmé
     return task.days.includes(getCurrentDay());
   });
 
