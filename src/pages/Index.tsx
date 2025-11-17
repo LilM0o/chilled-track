@@ -1,6 +1,5 @@
 import { Package, Thermometer, SprayCan, Truck, BarChart3, Settings, Calendar } from "lucide-react";
 import ModuleCard from "@/components/ModuleCard";
-import StatusCard from "@/components/StatusCard";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -95,25 +94,6 @@ const Index = () => {
             <ModuleCard key={module.to} {...module} />
           ))}
         </div>
-
-        {/* Dashboard Section */}
-        <section>
-          <h2 className="text-xl font-semibold mb-4 text-foreground">Tableau à Bord</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <StatusCard
-              title="Température Frigos : OK"
-              subtitle="(Dernière relevé il ya 10 min)"
-              colorClass="bg-module-blue text-module-blue-foreground"
-              to="/temperatures"
-            />
-            <StatusCard
-              title="Plan de Nettoyage :"
-              subtitle="3 tâches et attente"
-              colorClass="bg-module-green text-module-green-foreground"
-              to="/nettoyage"
-            />
-          </div>
-        </section>
       </div>
     </div>
   );
