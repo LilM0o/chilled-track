@@ -225,11 +225,13 @@ const Nettoyage = () => {
 
         <div className="grid grid-cols-2 gap-4 mb-6 animate-fade-in-up">
           <div className="bg-card rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
-            <p className="text-2xl font-bold text-primary">{completedTasks.length}/{tasks.length}</p>
+            <p className="text-2xl font-bold text-primary">{completedTasks.length}/{todayTasks.length}</p>
             <p className="text-sm text-muted-foreground">Complétées</p>
           </div>
           <div className="bg-card rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
-            <p className="text-2xl font-bold text-primary">{Math.round((completedTasks.length / tasks.length) * 100)}%</p>
+            <p className="text-2xl font-bold text-primary">
+              {todayTasks.length > 0 ? Math.round((completedTasks.length / todayTasks.length) * 100) : 0}%
+            </p>
             <p className="text-sm text-muted-foreground">Conformité</p>
           </div>
         </div>
