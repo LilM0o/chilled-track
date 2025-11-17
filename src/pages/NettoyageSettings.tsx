@@ -17,6 +17,7 @@ const NettoyageSettings = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
   const [editingDays, setEditingDays] = useState<string[]>([]);
+  const [editingTaskName, setEditingTaskName] = useState("");
 
   const categories = [
     { name: "Reserve", bgColor: "bg-module-blue", textColor: "text-module-blue-foreground" },
@@ -32,7 +33,6 @@ const NettoyageSettings = () => {
     { id: "jeudi", name: "Jeu" },
     { id: "vendredi", name: "Ven" },
     { id: "samedi", name: "Sam" },
-    { id: "dimanche", name: "Dim" },
   ];
 
   const [cleaningTasks, setCleaningTasks] = useState([]);
@@ -83,7 +83,7 @@ const NettoyageSettings = () => {
     if (taskName && selectedDays.length > 0 && selectedCategory) {
       const newTask = {
         name: taskName,
-        frequency: selectedDays.length === 7 ? "Quotidien" : selectedDays.length === 1 ? "Hebdomadaire" : "Personnalisé",
+        frequency: selectedDays.length === 6 ? "Quotidien" : selectedDays.length === 1 ? "Hebdomadaire" : "Personnalisé",
         days: selectedDays,
         category: selectedCategory
       };
@@ -101,19 +101,21 @@ const NettoyageSettings = () => {
   const handleEditTask = (index: number) => {
     setEditingTaskIndex(index);
     setEditingDays(cleaningTasks[index].days);
+    setEditingTaskName(cleaningTasks[index].name);
     setEditOpen(true);
   };
 
   const handleSaveEdit = async () => {
-    if (editingTaskIndex !== null && editingDays.length > 0) {
+    if (editingTaskIndex !== null && editingDays.length > 0 && editingTaskName.trim()) {
       const task = cleaningTasks[editingTaskIndex];
       if (!task) return;
       
       const updatedTasks = [...cleaningTasks];
       updatedTasks[editingTaskIndex] = {
         ...updatedTasks[editingTaskIndex],
+        name: editingTaskName,
         days: editingDays,
-        frequency: editingDays.length === 7 ? "Quotidien" : editingDays.length === 1 ? "Hebdomadaire" : "Personnalisé"
+        frequency: editingDays.length === 6 ? "Quotidien" : editingDays.length === 1 ? "Hebdomadaire" : "Personnalisé"
       };
       setCleaningTasks(updatedTasks);
       await storage.setItem('cleaningTasks', JSON.stringify(updatedTasks));
@@ -121,6 +123,7 @@ const NettoyageSettings = () => {
       setEditOpen(false);
       setEditingTaskIndex(null);
       setEditingDays([]);
+      setEditingTaskName("");
     }
   };
 
@@ -289,12 +292,18 @@ const NettoyageSettings = () => {
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Modifier les jours de récurrence</DialogTitle>
+            <DialogTitle>Modifier la tâche</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             {editingTaskIndex !== null && (
               <div className="space-y-2">
-                <Label className="font-semibold">{cleaningTasks[editingTaskIndex].name}</Label>
+                <Label htmlFor="edit-task-name">Nom de la tâche</Label>
+                <Input
+                  id="edit-task-name"
+                  value={editingTaskName}
+                  onChange={(e) => setEditingTaskName(e.target.value)}
+                  placeholder="Ex: Nettoyage des sols"
+                />
                 <p className="text-sm text-muted-foreground">Catégorie: {cleaningTasks[editingTaskIndex].category}</p>
               </div>
             )}
@@ -324,7 +333,7 @@ const NettoyageSettings = () => {
             <Button 
               onClick={handleSaveEdit} 
               className="w-full"
-              disabled={editingDays.length === 0}
+              disabled={editingDays.length === 0 || !editingTaskName.trim()}
             >
               Enregistrer
             </Button>

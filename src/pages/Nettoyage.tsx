@@ -106,8 +106,10 @@ const Nettoyage = () => {
 
   // Obtenir le jour actuel en français
   const getCurrentDay = () => {
-    const days = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
-    return days[new Date().getDay()];
+    const days = ['', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+    const dayIndex = new Date().getDay();
+    // Dimanche = 0, donc retourner vide pour ne pas afficher de tâches
+    return dayIndex === 0 ? '' : days[dayIndex];
   };
 
   // Filtrer les tâches pour aujourd'hui
