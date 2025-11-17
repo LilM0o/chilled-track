@@ -95,9 +95,14 @@ const Nettoyage = () => {
   };
 
   // Filtrer les tâches pour aujourd'hui
-  const todayTasks = tasks.filter(task => 
-    task.days && Array.isArray(task.days) && task.days.includes(getCurrentDay())
-  );
+  const todayTasks = tasks.filter(task => {
+    // Si pas de jours définis ou array vide, afficher la tâche
+    if (!task.days || !Array.isArray(task.days) || task.days.length === 0) {
+      return true;
+    }
+    // Sinon, filtrer par jour actuel
+    return task.days.includes(getCurrentDay());
+  });
 
   const completedTasks = todayTasks.filter(t => t.status === "done");
   const pendingTasks = todayTasks.filter(t => t.status === "pending");
